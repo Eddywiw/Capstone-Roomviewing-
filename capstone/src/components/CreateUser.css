@@ -1,0 +1,15 @@
+.usemain{
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    width: 25rem;
+    z-index: 1;
+}
+.addstubtn{
+    align-items: center;
+    justify-content: center;
+}

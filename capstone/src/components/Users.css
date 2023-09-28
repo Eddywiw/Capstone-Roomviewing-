@@ -1,0 +1,84 @@
+/* Users.css */
+
+.table-container {
+ 
+  margin-bottom: 2rem;
+  margin-top: 2rem;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 15px;
+  background-color: #fff;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  width: 70rem;
+  max-height: 30rem;
+  z-index: 1;
+}
+
+.table {  
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  
+}
+
+.table th,
+.table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ccc;
+}
+
+.table th {
+  background-color: #f1f1f1;
+}
+
+.table tbody tr:hover {
+  background-color: #f9f9f9;
+}
+
+.addbtn-container {
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 5px;
+}
+
+.addbtn {
+  background-color: royalblue;
+  border-radius: 3px;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  margin-left: 1rem;
+  height: 2.3rem;
+}
+.addeventBTN{
+  background-color: royalblue;
+  border-radius: 3px;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  margin-left: 1rem;
+  height: 2.3rem;
+ }
+.addbtn:hover {
+  background-color: #0056b3;
+}
+
+.button-div {
+  display: flex;
+  gap: 10px;
+}
+
+.button-div button {
+  background-color: royalblue;
+  border-radius: 3px;
+  height: 2.3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+}
+
+.button-div button:hover {
+  background-color: #0056b3;
+}
