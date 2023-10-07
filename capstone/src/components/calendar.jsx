@@ -9,7 +9,7 @@ import './Calendar.css';
 
 const localizer = momentLocalizer(moment);
 
-function Calendar({currentStudent}) {
+function Calendar() {
   const [eventList, setEventList] = useState([]);
 
 
@@ -18,10 +18,8 @@ function Calendar({currentStudent}) {
       
       const eventsCollection = collection(db, 'schedules');
       const eventsSnapshot = await getDocs(eventsCollection);
-      const userId = currentStudent.id;
       const eventsData = eventsSnapshot.docs.map(doc => ({
         id: doc.userId,
-        userId,
         title: doc.data().Title,
         start: doc.data().Start.toDate(), // Convert Timestamp to Date
         end: doc.data().End.toDate(), // Convert Timestamp to Date

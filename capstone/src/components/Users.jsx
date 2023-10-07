@@ -6,8 +6,9 @@ import { collection, getDocs } from "firebase/firestore";
 import { doc, deleteDoc } from "firebase/firestore";
 import './Users.css'
 import {db} from '../config/firestore'
+import Calendar from './calendar';
 function Users() {
-    //
+    //bago to
     const [selectedOption, setSelectedOption] = useState('');
   
     const options = [
@@ -147,7 +148,7 @@ function Users() {
       {/* Pass the handleStudentAdded function to CreateUser */}
       {showModal && <CreateUser onClose={handleCloseModals} onStudentAdded={handleStudentAdded} getStudent={getStudent} />}
 
-      {currentUser && <Calendar currentStudent={currentUser} />}
+     
     </div>
   );
 }
