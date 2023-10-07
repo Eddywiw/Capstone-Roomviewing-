@@ -28,7 +28,7 @@ function UpdateEvent({ onClose, currentEvent, timedateformat, getEvent }) {
       const endTimestamp = new Date(`${updatedEvent.date} ${updatedEvent.endTime}`);
 
       // Update the event in Firestore
-      const studentRef = doc(db, 'events', currentEvent.id);
+      const studentRef = doc(db, 'schedules', currentEvent.id);
       await updateDoc(studentRef, {
         Title: updatedEvent.title,
         Start: startTimestamp,
