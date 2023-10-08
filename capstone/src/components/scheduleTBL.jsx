@@ -69,8 +69,11 @@ function ScheduleTBL() {
   return (
     <div className='use-div'>
       <div className='table-container'>
-     
+          <div>
+            <p>Events List:</p>
+          </div>
         <table className='table'>
+          
           <thead>
             <tr>
               <th>Date</th>

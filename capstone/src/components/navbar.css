@@ -101,3 +101,13 @@
   span {
     margin-left: 16px;
   }
+
+  .notification-icon{
+    display: flex; /* Make it a flex item */
+    align-items: center;
+    margin-right: 1rem;
+    
+  }
+  .notification-icon:hover{
+    cursor: pointer;
+  }
