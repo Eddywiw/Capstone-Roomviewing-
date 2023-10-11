@@ -14,6 +14,7 @@ function Navbar() {
   const [showLogoutForm, setShowLogoutForm] = useState(false);
   const showSidebar = () => setSidebar(!sidebar);
   const [showNotification, setShowNotification] = useState(false); 
+  const [lblNavText, setLblNavText] = useState("Home");
   const handleNotificationClick = () => {
     setShowNotification(true);
   };
@@ -30,6 +31,9 @@ function Navbar() {
           <Link to="#" className="menu-bars">
             <FaIcons.FaBars onClick={showSidebar} />
           </Link>
+          <div className="lbl_nav">
+            <p>{lblNavText}</p>
+          </div>
           <div className="search-bar">
             <input type="search" placeholder="Search..." />
           </div>
@@ -53,7 +57,7 @@ function Navbar() {
                       <span>{item.title}</span>
                     </Link>
                   ) : (
-                    <Link to={item.path}>
+                    <Link to={item.path} onClick={() => setLblNavText(item.title)}>
                       {item.icon}
                       <span>{item.title}</span>
                     </Link>

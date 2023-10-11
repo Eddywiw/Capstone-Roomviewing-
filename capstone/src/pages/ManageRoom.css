@@ -15,12 +15,12 @@
     gap: 2rem;
   }
   .cardDeletekBTN{
-    background: red;
+    background: rgb(228, 43, 43);
     height: 2rem;
     border-radius: 3px;
   }
   .cardEditBTN{
-    background: blue;
+    background: rgb(49, 49, 228);
     height: 2rem;
     border-radius: 3px;
   }
@@ -33,7 +33,7 @@
     height: 3rem;
     border-radius: 5px;
     justify-content: center;
-    background: blue;
+    background: royalblue;
   }
  .card-time-con{
   display: flex;

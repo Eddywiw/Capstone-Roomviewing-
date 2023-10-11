@@ -37,7 +37,7 @@
     margin-left: 1rem;
     font-size: 1.5rem;
     background: none;
-    color: #000;
+    color: white;
   }
   
   .nav-menu {
@@ -69,7 +69,7 @@
   
   .nav-text a {
     text-decoration: none;
-    color: #151414;
+    color: white;
     font-size: 18px;
     width: 95%;
     height: 100%;
@@ -106,8 +106,14 @@
     display: flex; /* Make it a flex item */
     align-items: center;
     margin-right: 1rem;
+    color: white;
     
   }
   .notification-icon:hover{
     cursor: pointer;
+  }
+
+  .lbl_nav{
+    color: white;
+    margin: 1rem;
   }

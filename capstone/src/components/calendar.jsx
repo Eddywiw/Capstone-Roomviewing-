@@ -37,14 +37,14 @@ function Calendar() {
 
 
   return (
-    <div className="schedule-container">
+    <div className="modern-calendar-container">
       
-      <BigCalendar
+      <BigCalendar className='calen'  
         localizer={localizer}
         events={eventList}
         startAccessor="start"
         endAccessor="end"
-        style={{ height: 500 }}
+        
       />
     </div>
   );

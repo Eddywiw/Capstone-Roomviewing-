@@ -6,12 +6,15 @@ import { deleteDoc, doc } from "firebase/firestore";
 import CreateRoom from '../components/CreateRoom'; // Import the CreateRoom component
 import UpdateRoom from '../components/UpdateRoom';
 import { Timestamp } from 'firebase/firestore';
+import pickoto from '../assets/304.jpg'
 
 function ManageRoom() {
   const [currentRoom, setCurrentRoom] = useState(null);
   const [roomEntries, setRoomEntries] = useState([]); // State to store the fetched room data
   const [isCreateRoomVisible, setIsCreateRoomVisible] = useState(false); // State to manage CreateRoom visibility
   const[isUpdateRoomVisivle, setIsUpdateRoomVisible] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null); // State to store the selected image file
+  const [imageURL, setImageURL] = useState(null); // State to store the URL of the uploaded image
   const handleStudentAdded = (newRoom) => {
     setRoomEntries((prevUsers) => [...prevUsers, newRoom]);
   };
@@ -64,6 +67,42 @@ function ManageRoom() {
   
     return formattedTime;
   }
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    setSelectedImage(file);
+
+    // Display a preview of the selected image, if needed
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setImageURL(e.target.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleUploadImage = async (roomId) => {
+    if (!selectedImage) {
+      // No image selected, handle this case as needed
+      return;
+    }
+
+    // Upload the selected image to a storage service (e.g., Firebase Storage)
+    const storageRef = ref(storage, `room_images/${roomId}/${selectedImage.name}`);
+    try {
+      const snapshot = await uploadBytes(storageRef, selectedImage);
+      const imageURL = await getDownloadURL(snapshot.ref);
+      setImageURL(imageURL);
+      
+      // Update the room entry with the imageURL in the database
+      await updateDoc(doc(db, "rooms", roomId), {
+        image: imageURL,
+      });
+    } catch (error) {
+      console.error("Error uploading image: ", error);
+    }
+  };
   
   return (
     <div>
@@ -75,7 +114,9 @@ function ManageRoom() {
         {roomEntries.map(entry => (
           <div key={entry.id} className='card2'>   
             <div className='Card'>
-              <div className='card-image'></div>
+              <div className='card-image'>
+              <img src={imageURL} alt="Room Image" />
+              </div>
               <p className='card-title'>Room: {entry.Roomno}</p>                 
               <div className='floor-capacity-con'>
               <p className='card-body'>Floor: {entry.Floor}</p>
@@ -85,7 +126,10 @@ function ManageRoom() {
               <div className='bookBTN-container'>
                 <button className='cardEditBTN' onClick={() => toggleUpdateRoom(entry)}>Edit</button>
                 <button onClick={() => handleDeleteBtnClick(entry.id)} className='cardDeletekBTN'>Delete</button>
+                
               </div>
+              <input type="file" accept="image/*" onChange={handleImageChange} />
+                <button onClick={() => handleUploadImage(entry.id)}>Upload Image</button>
             </div>
             {isCreateRoomVisible && (
               <CreateRoom
