@@ -1,11 +1,11 @@
 /* Navbar CSS */
 .navbar {
-    background: royalblue;
+    background: linear-gradient(to right, royalblue, white, #e7c01d);
     height: 64px;
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    border-bottom: #e7c01d solid 2px;
+    
     
     
   }
@@ -106,7 +106,7 @@
     display: flex; /* Make it a flex item */
     align-items: center;
     margin-right: 1rem;
-    color: white;
+    color: rgb(85, 83, 83);
     
   }
   .notification-icon:hover{
