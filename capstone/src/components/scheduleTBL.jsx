@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '../config/firestore';
 import { collection, getDocs } from 'firebase/firestore';
-import './Users.css'
+import './scheduleTBL.css'
 import InsertEvent from './InsertEvent';
 import { doc, deleteDoc } from "firebase/firestore";
 import UpdateEvent from './updateEvent';
@@ -68,11 +68,11 @@ function ScheduleTBL() {
 
   return (
     <div className='use-div'>
-      <div className='table-container'>
-          <div>
-            <p>Events List:</p>
+      <div className='Event-table-container'>
+          <div className='lbl-eventlist-con'>
+            <p className='lbl-eventlist'>Events List:</p>
           </div>
-        <table className='table'>
+        <table className='Eventtable'>
           
           <thead>
             <tr>

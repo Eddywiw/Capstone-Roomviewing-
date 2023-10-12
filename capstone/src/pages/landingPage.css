@@ -10,11 +10,11 @@
     font-size: 80px;
     color: blue;
     margin-bottom: 20px;
-    
+    font-family: 'Belanosima', sans-serif;
   }
   .sub-header{
     margin-bottom: 10px;
-    
+    font-family: 'Roboto Mono', monospace;
   }
   .login-form{
     position: absolute;

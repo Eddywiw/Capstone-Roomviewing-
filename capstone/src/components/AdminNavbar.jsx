@@ -34,9 +34,7 @@ function Navbar() {
           <div className="lbl_nav">
             <p>{lblNavText}</p>
           </div>
-          <div className="search-bar">
-            <input type="search" placeholder="Search..." />
-          </div>
+         
           <div className="notification-icon" onClick={handleNotificationClick}>
             <BsBell />
           </div>

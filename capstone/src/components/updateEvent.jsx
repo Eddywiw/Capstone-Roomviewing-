@@ -58,11 +58,13 @@ function UpdateEvent({ onClose, currentEvent, timedateformat, getEvent }) {
   };
 
   return (
-    <div>
-      <form className='formcon' onSubmit={handleSubmit}>
-        <button className="exit-btn" onClick={onClose}>
+    <div >
+       <button className="exit-btn" onClick={onClose}>
           X
         </button>
+       
+      <form className='formcon' onSubmit={handleSubmit}>
+       
         <div className="group">
             <input
                 placeholder=""

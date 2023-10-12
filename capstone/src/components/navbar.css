@@ -1,6 +1,6 @@
 /* Navbar CSS */
 .navbar {
-    background: linear-gradient(to right, royalblue, white, #e7c01d);
+    background: #005173;
     height: 64px;
     display: flex;
     justify-content: flex-start;
@@ -105,12 +105,13 @@
   .notification-icon{
     display: flex; /* Make it a flex item */
     align-items: center;
-    margin-right: 1rem;
-    color: rgb(85, 83, 83);
+    margin-right: 1rem;  
+    color: white;
     
   }
   .notification-icon:hover{
     cursor: pointer;
+    
   }
 
   .lbl_nav{

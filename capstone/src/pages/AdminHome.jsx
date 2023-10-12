@@ -22,6 +22,8 @@ function AdminHome() {
               <p>0</p>
               <p>Total Professors</p>
           </div>
+          
+          
         </div>
         
           <div className="schedule-con">
