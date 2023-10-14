@@ -104,7 +104,7 @@ useEffect(() => {
       <Carousel responsive={responsive} itemClass="carousel-item" className='carousel-container'>
       {roomEntries.map(entry => (
         <div class="Card">
-          <div class="card-image"></div>
+          <div className='card-image' style={{ backgroundImage: `url(${entry.ImageUrl})` }}></div>
           <p class="card-title">Room: {entry.Roomno}</p>
           <p class="card-body">
            Floor: {entry.Floor}

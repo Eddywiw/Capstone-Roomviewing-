@@ -56,18 +56,21 @@ function Room() {
         </div>
       <div className='roomdiv'>
       {roomEntries.map(entry => (
-        <div class="Card">
-          <div class="card-image"></div>
-          <p class="card-title">Room: {entry.Roomno}</p>
-          <p class="card-body">
-           Floor: {entry.Floor}
-          </p>
-          <p className='card-capacity'>Capacity: {entry.Capacity}</p>
-          <p className='card-status'>Status: {entry.Status}</p>
-          <div className='bookBTN-container'>
-            <button className='bookBTN'>Book</button>
-          </div>          
-        </div>
+         <div className='Card'>
+         <div className='card-image' style={{ backgroundImage: `url(${entry.ImageUrl})` }}>
+           {/* Display the image */}
+         </div>
+         <p className='card-title'>Room: {entry.Roomno}</p>                 
+         <div className='floor-capacity-con'>
+           <p className='card-body'>Floor: {entry.Floor}</p>
+           <p className='card-capacity'>Capacity: {entry.Capacity}</p>
+         </div>                              
+         <p className='card-status'>Status: {entry.Status}</p>
+         <div className='bookBTN-container'>
+           <button className='cardEditBTN' onClick={() => toggleUpdateRoom(entry)}>Edit</button>
+           <button onClick={() => handleDeleteBtnClick(entry.id)} className='cardDeletekBTN'>Delete</button>                
+         </div>
+       </div>
         ))}          
       </div>
 

@@ -1,76 +1,74 @@
-import React,{useState} from 'react';
+import React, { useState } from 'react';
 import { collection, addDoc } from "firebase/firestore";
-import { db } from '../config/firestore';
-import './CreateRoom.css'
-function CreateRoom({onClose,onRoomAdded}) {
-    const [newRoom, setNewRoom] = useState({
+import { db, storage } from '../config/firestore';
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { v4 as uuidv4 } from "uuid";
+import './CreateRoom.css';
+
+function CreateRoom({ onClose, onRoomAdded }) {
+  const [newRoom, setNewRoom] = useState({
+    roomnum: "",
+    floor: "",
+    capacity: "",
+    status: "",
+    imageurl: null, // Initialize imageurl as null
+  });
+
+  const handleChange = (event) => {
+    const { name, value, type } = event.target;
+
+    if (type === "file") {
+      // Handle file input separately
+      const file = event.target.files[0]; // Get the selected file
+
+      // Update the imageurl with the selected file
+      setNewRoom({ ...newRoom, [name]: file });
+    } else if (name === "start" || name === "end") {
+      const [hours, minutes] = value.split(":");
+      const formattedTime = `${hours}:${minutes}`;
+      setNewRoom({ ...newRoom, [name]: formattedTime });
+    } else {
+      setNewRoom({ ...newRoom, [name]: value });
+    }
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    try {
+      const uniqueFilename = uuidv4();
+      const imageRef = ref(storage, `images/${uniqueFilename}`);
+      await uploadBytes(imageRef, newRoom.imageurl);
+      const imageUrl = await getDownloadURL(imageRef);
+
+      const docRef = await addDoc(collection(db, "rooms"), {
+        Roomno: newRoom.roomnum,
+        Floor: newRoom.floor,
+        Capacity: newRoom.capacity,
+        Status: newRoom.status,
+        ImageUrl: imageUrl,
+      });
+
+      onRoomAdded({
+        Roomno: newRoom.roomnum,
+        Floor: newRoom.floor,
+        Capacity: newRoom.capacity,
+        Status: newRoom.status,
+        ImageUrl: imageUrl,
+      });
+
+      console.log("Document written with ID: ", docRef.id);
+      onClose();
+      setNewRoom({
         roomnum: "",
-        floor:"",
+        floor: "",
         capacity: "",
         status: "",
-        
-        professor:"",
-        event_tittle:""
-    });
-    const handleChange = (event) => {
-      const { name, value } = event.target;
-    
-      if (name === "start" || name === "end") {
-        // Extract the hours and minutes from the value
-        const [hours, minutes] = value.split(":");
-        // Format the time as "HH:mm"
-        const formattedTime = `${hours}:${minutes}`;
-    
-        setNewRoom({ ...newRoom, [name]: formattedTime });
-      } else {
-        setNewRoom({ ...newRoom, [name]: value });
-      }
-    };
-    
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-        try {
-          const docRef = await addDoc(collection(db, "rooms"), {
-            Roomno: newRoom.roomnum,
-            Floor: newRoom.floor,
-            Capacity: newRoom.capacity,
-            Status: newRoom.status,
-            
-            Professor: newRoom.professor,
-            Event_tittle: newRoom.event_tittle
-          });
-    
-          // Call the onStudentAdded callback with the new student data
-          onRoomAdded({
-            Roomno: newRoom.roomnum,
-            Floor: newRoom.floor,
-            Capacity: newRoom.capacity,
-            Status: newRoom.status,
-          
-            Professor: newRoom.professor,
-            Event_tittle: newRoom.event_tittle
-          });
-    
-          console.log("Document written with ID: ", docRef.id);
-    
-          // Close the CreateUser modal after successful addition
-          onClose();
-    
-          // Clear the form inputs after successful addition
-          setNewRoom({
-            roomnum: "",
-            floor:"",
-            capacity: "",
-            status: "",
-            start: "",
-            end: "" ,
-            professor:"",
-            event_tittle:""
-          });
-        } catch (error) {
-          console.error("Error adding document: ", error);
-        }
-    };
+        imageurl: null, // Reset imageurl to null
+      });
+    } catch (error) {
+      console.error("Error adding document: ", error);
+    }
+  };
       
   return (
     <div className='usemain'>
@@ -91,29 +89,7 @@ function CreateRoom({onClose,onRoomAdded}) {
           <label htmlFor="roomnum">Room:</label>
         </div>
 
-        <div className="group">
-          <input
-            placeholder=""
-            type="text"
-            name="event_tittle"
-            value={newRoom.event_tittle}
-            onChange={handleChange}
-            required
-          />
-          <label htmlFor="event_tittle">Event Tittle:</label>
-        </div>
-
-        <div className="group">
-          <input
-            placeholder=""
-            type="text"
-            name="professor"
-            value={newRoom.professor}
-            onChange={handleChange}
-            required
-          />
-          <label htmlFor="professor">Professor:</label>
-        </div>
+       
         
         
 
@@ -149,6 +125,18 @@ function CreateRoom({onClose,onRoomAdded}) {
             required
           />
           <label htmlFor="status">Status:</label>
+        </div>
+
+        <div className="group">
+          <input
+            placeholder=""
+            type="file"
+            name="imageurl"
+           
+            onChange={handleChange}
+            required
+          />
+          
         </div>
         <button className='addstubtn' type="submit">
           Add
