@@ -5,8 +5,17 @@ import {Link} from 'react-router-dom';
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
 import { db } from '../config/firestore';
-import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { collection, getDocs, where, query } from 'firebase/firestore';
+import {
+  getAuth,
+  onAuthStateChanged,
+} from 'firebase/auth';
+import {
+  collection,
+  getDocs,
+  where,
+  query,
+  addDoc,
+} from 'firebase/firestore';
 const Home = () => {
   const auth = getAuth();
   onAuthStateChanged(auth, (user) => {
@@ -80,6 +89,43 @@ useEffect(() => {
     }
   });
 
+  const [isSubmitting, setIsSubmitting] = useState(false); 
+
+  const [bookingData, setBookingData] = useState({
+    roomNumber: '',
+    date: '',
+    time: '',
+    reason: '',
+  });
+  
+
+  const handleBookingSubmit = async (e) => {
+    e.preventDefault(); // Prevent the default form submission behavior
+    setIsSubmitting(true); // Set isSubmitting to true while submitting
+    try {
+      const docRef = await addDoc(collection(db, 'notifications'), {
+        teacherName: userName,
+        roomNumber: bookingData.roomNumber,
+        date: bookingData.date,
+        time: bookingData.time,
+        reason: bookingData.reason,
+      });
+
+      setBookingData({
+        roomNumber: '',
+        date: '',
+        time: '',
+        reason: '',
+      });
+      setIsFormVisible(false);
+      setIsSubmitting(false);
+    } catch (error) {
+      // Handle errors and set isSubmitting to false in case of an error
+      console.error('Error adding document: ', error);
+      setIsSubmitting(false);
+    }
+  };
+
 
   
   return (
@@ -103,10 +149,10 @@ useEffect(() => {
       </div>
       <Carousel responsive={responsive} itemClass="carousel-item" className='carousel-container'>
       {roomEntries.map(entry => (
-        <div class="Card">
+        <div key={entry.id} class="Card">
           <div className='card-image' style={{ backgroundImage: `url(${entry.ImageUrl})` }}></div>
-          <p class="card-title">Room: {entry.Roomno}</p>
-          <p class="card-body">
+          <p className="card-title">Room: {entry.Roomno}</p>
+          <p className="card-body">
            Floor: {entry.Floor}
           </p>
           <p className='card-capacity'>Capacity: {entry.Capacity}</p>
@@ -121,38 +167,80 @@ useEffect(() => {
       </Carousel>;
    
       {isFormVisible && (
-        <div class="carding">
+        <div className="carding">
           <button className="exit-btn" onClick={hideForm}>
             X
           </button>
-          <span class="title">Request to Admin</span>
-          <form class="form">
-            <div class="group">
-              <input placeholder="" type="text" required=""/>
-              <label for="name">Room no:</label>
+          <span className="title">Request to Admin</span>
+          <form className="form" onSubmit={handleBookingSubmit}>
+          <div className='group'>
+              <input
+                placeholder='Room No'
+                type='text'
+                required
+                value={bookingData.roomNumber}
+                onChange={(e) =>
+                  setBookingData({
+                    ...bookingData,
+                    roomNumber: e.target.value,
+                  })
+                }
+              />
+              <label for='name'>Room no:</label>
             </div>
-            <div class="group">
-              <input placeholder="" type="date" id="date" name="date" required=""/>
-              <label for="date">Date</label>
+            <div className='group'>
+              <input
+                placeholder='Date'
+                type='date'
+                id='date'
+                name='date'
+                required
+                value={bookingData.date}
+                onChange={(e) =>
+                  setBookingData({
+                    ...bookingData,
+                    date: e.target.value,
+                  })
+                }
+              />
+              <label for='date'>Date</label>
             </div>
-            <div class="group">
-              <input placeholder="" type="time" id="time" name="time" required=""/>
-              <label for="time">Time</label>
+            <div className='group'>
+              <input
+                placeholder='Time'
+                type='time'
+                id='time'
+                name='time'
+                required
+                value={bookingData.time}
+                onChange={(e) =>
+                  setBookingData({
+                    ...bookingData,
+                    time: e.target.value,
+                  })
+                }
+              />
+              <label for='time'>Time</label>
             </div>
-            <div class="group">
-              <textarea placeholder="" id="comment" name="comment" rows="5" required=""></textarea>
-              <label for="comment">Reason</label>
+            <div className='group'>
+              <textarea
+                placeholder='Reason'
+                id='comment'
+                name='comment'
+                rows='5'
+                required=''
+                value={bookingData.reason}
+                onChange={(e) =>
+                  setBookingData({
+                    ...bookingData,
+                    reason: e.target.value,
+                  })
+                }
+              ></textarea>
+              <label for='comment'>Reason</label>
             </div>
-            <button>
-              <div class="svg-wrapper-1">
-                <div class="svg-wrapper">
-                  <svg height="24" width="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M0 0h24v24H0z" fill="none"></path>
-                   <path d="M1.946 9.315c-.522-.174-.527-.455.01-.634l19.087-6.362c.529-.176.832.12.684.638l-5.454 19.086c-.15.529-.455.547-.679.045L12 14l6-8-8 6-8.054-2.685z" fill="currentColor"></path>
-                  </svg>
-                </div>
-              </div>
-                <span>Send</span>
+            <button type="submit" disabled={isSubmitting}>Submit
+              
             </button>
           </form>
         </div>

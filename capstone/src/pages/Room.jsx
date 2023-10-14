@@ -67,9 +67,8 @@ function Room() {
          </div>                              
          <p className='card-status'>Status: {entry.Status}</p>
          <div className='bookBTN-container'>
-           <button className='cardEditBTN' onClick={() => toggleUpdateRoom(entry)}>Edit</button>
-           <button onClick={() => handleDeleteBtnClick(entry.id)} className='cardDeletekBTN'>Delete</button>                
-         </div>
+            <button className='bookBTN'>Book</button>
+          </div>   
        </div>
         ))}          
       </div>
