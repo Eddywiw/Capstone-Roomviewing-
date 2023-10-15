@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import ScheduleTBL from '../components/scheduleTBL';
 import './AdminHome.css';
+import * as IoIcons from "react-icons/io";
 import { db } from '../config/firestore';
 import {
   collection,
@@ -68,14 +69,25 @@ function AdminHome() {
           <p>My Dashboard</p>
         </div>
         <div className='tota-con'>
-          <div className='totalstudents'>            
-            <canvas ref={chartRef} className="chart-canvas" />
-
-            <p>Total Students: {totalStudents}</p>
+          <div className='totalstudents'>
+            <div className='totalstu_lbl'>
+              <p>BSIT: {totalStudentsBSIT}</p>
+              <p>BSBA: {totalStudentsBSBA}</p>
+              <p>Total Students: {totalStudents}</p>
+            </div>
+            <div className='icon-totalstu'>
+            <IoIcons.IoMdPeople className="icon-people1" />
+            </div>
           </div>
           <div className='totalprof'>
-            <p>0</p>
-            <p>Total Professors</p>
+            <div className='totalprof_lbl'>
+              <p>0</p>
+              <p>Total Professors</p>
+            </div>
+            <div className='icon-totalprof'>
+            <IoIcons.IoMdPeople className="icon-people" />
+            </div>
+            
           </div>
         </div>
         <div className="schedule-con">

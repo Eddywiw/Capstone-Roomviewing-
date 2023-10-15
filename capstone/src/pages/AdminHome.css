@@ -16,14 +16,20 @@
     background: #107dac;
     border-radius: 0.5rem;
     width: 300px;
-    height: 300px;
+    height: 100px;
     margin: 1rem;
     align-items: center;
     justify-content: center;
     color: white;
-    gap: 0.5rem;
-    flex-direction: column;
+    gap: 5rem;    
 }
+.icon-totalstu{    
+    color: #107dac;   
+ }
+ .icon-people1 {
+     font-size: 50px; /* Change the size to your desired value */
+     color: #e7c01d;
+   }
 
 .totalprof{
     display: flex;
@@ -31,12 +37,21 @@
     border-radius: 0.5rem;
     width: 300px;
     height: 100px;
-    margin: 1rem;
-    align-items: center;
     justify-content: center;
+    align-items: center;
     color: white;
-    gap: 0.5rem;
+    gap: 5rem;
 }
+
+.icon-totalprof{    
+   color: #121618;   
+}
+.icon-people {
+    font-size: 50px; /* Change the size to your desired value */
+    color: #107dac;
+  }
+
+  
 
 .lbl_dashboard{
     font-weight: bold;
@@ -44,8 +59,10 @@
     margin-left: 120px;
 }
 
-.chart-canvas {
+.chart-con {
     width: 100px; /* Set the width */
     height: 100px; /* Set the height */
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
-  
