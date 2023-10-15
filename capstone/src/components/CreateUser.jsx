@@ -3,7 +3,7 @@ import './CreateUser.css';
 import { collection, addDoc } from "firebase/firestore";
 import { db } from '../config/firestore';
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
-function CreateUser({ onClose, onStudentAdded }) {
+function CreateUser({ onClose, onStudentAdded, section}) {
   const [newStudent, setNewStudent] = useState({
     name: "",
     studentNo: "",
@@ -33,7 +33,7 @@ function CreateUser({ onClose, onStudentAdded }) {
       console.log('User created:', user);
   
       // Now you can proceed to add student data to Firestore
-      const docRef = await addDoc(collection(db, 'bsit'), {
+      const docRef = await addDoc(collection(db, section), {
         Name: newStudent.name,
         Studentno: newStudent.studentNo,
         Section: newStudent.section,

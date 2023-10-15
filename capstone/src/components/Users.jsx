@@ -9,7 +9,9 @@ import {db} from '../config/firestore'
 import Calendar from './calendar';
 function Users() {
     //bago to
-    const [selectedOption, setSelectedOption] = useState('');
+    const [selectedSection, setSelectedSection] = useState('bsit'); // Initialize with 'bsit'
+   
+
   
     const options = [
       { value: 'BSIT', label: 'BSIT' },
@@ -26,16 +28,15 @@ function Users() {
     setUsers((prevUsers) => [...prevUsers, newStudent]);
   };
   const [users, setUsers] = useState([]);
-  const getStudent = async () =>{
-    const querySnapshot = await getDocs(collection(db, "bsit"));
-    const users = querySnapshot.docs.map(doc => ({id: doc.id, ...doc.data()}))
-    querySnapshot.forEach((doc) => {
-      // doc.data() is never undefined for query doc snapshots
-      console.log(doc.id, " => ", doc.data());
-    });
-    setUsers(users)
-    
-  }
+  const getStudent = async () => {
+    try {
+      const querySnapshot = await getDocs(collection(db, selectedSection));
+      const users = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      setUsers(users);
+    } catch (error) {
+      console.error("Error fetching data: ", error);
+    }
+  };
   useEffect(() =>{
     getStudent()
   }, [users]);
@@ -45,7 +46,7 @@ function Users() {
  
   const handleDeleteBtnClick = async (userId) => {
     try {
-      await deleteDoc(doc(db, "bsit", userId));
+      await deleteDoc(doc(db, selectedSection, userId));
       // After successfully deleting the document, update the state to remove the deleted user from the table
       setUsers((prevUsers) => prevUsers.filter((user) => user.id !== userId));
     } catch (error) {
@@ -89,13 +90,10 @@ function Users() {
     <div className='use-div'>
       <div className='table-container'>
       <div>
-      <select value={selectedOption} onChange={handleDropdownChange}>
-        <option value="">Select an section</option>
-        {options.map((option) => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
-        ))}
+      <select value={selectedSection} onChange={(event) => setSelectedSection(event.target.value)}>
+        <option value="bsit">BSIT</option>
+        <option value="bsba">BSBA</option>
+        <option value="hrs">HRS</option>
       </select>
      
       </div>
@@ -146,7 +144,7 @@ function Users() {
         </div>
       )}
       {/* Pass the handleStudentAdded function to CreateUser */}
-      {showModal && <CreateUser onClose={handleCloseModals} onStudentAdded={handleStudentAdded} getStudent={getStudent} />}
+      {showModal && <CreateUser onClose={handleCloseModals} onStudentAdded={handleStudentAdded} getStudent={getStudent} section={selectedSection}/>}
 
      
     </div>

@@ -81,22 +81,35 @@ useEffect(() => {
 }, []); // Run this effect only once, similar to componentDidMount
 
   
-  const [userName, setUserName] = useState('');
+const [userName, setUserName] = useState('');
 
-  onAuthStateChanged(auth, async (user) => {
-    if (user) {
-      // Fetch user's name from Firestore based on their email
-      const userQuery = query(
-        collection(db, 'bsit'),
-        where('Email', '==', user.email)
-      );
-      const querySnapshot = await getDocs(userQuery);
-      if (!querySnapshot.empty) {
-        const userData = querySnapshot.docs[0].data();
-        setUserName(userData.Name); // Set the user's name
-      }
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    // Fetch user's name from Firestore based on their email
+    const bsitUserQuery = query(
+      collection(db, 'bsit'),
+      where('Email', '==', user.email)
+    );
+
+    const bsbaUserQuery = query(
+      collection(db, 'bsba'),
+      where('Email', '==', user.email)
+    );
+
+    const [bsitQuerySnapshot, bsbaQuerySnapshot] = await Promise.all([
+      getDocs(bsitUserQuery),
+      getDocs(bsbaUserQuery),
+    ]);
+
+    if (!bsitQuerySnapshot.empty) {
+      const userData = bsitQuerySnapshot.docs[0].data();
+      setUserName(userData.Name);
+    } else if (!bsbaQuerySnapshot.empty) {
+      const userData = bsbaQuerySnapshot.docs[0].data();
+      setUserName(userData.Name);
     }
-  });
+  }
+});
 
   const [isSubmitting, setIsSubmitting] = useState(false); 
 

@@ -1,12 +1,12 @@
 // firebaseConfig.js
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBWDs9VJ8c0REbtm5K4VUbaVpu8MCxUy6s",
-  authDomain: "capstonedb4.firebaseapp.com",
-  projectId: "capstonedb4",
-  storageBucket: "gs://capstonedb4.appspot.com",
-  messagingSenderId: "527158056454",
-  appId: "1:527158056454:web:5f64955a458fc1c4841587"
+  apiKey: "AIzaSyCbYakQH7Z9F-3lw57lX30QzWPq9oACj2c",
+  authDomain: "capstonedb5.firebaseapp.com",
+  projectId: "capstonedb5",
+  storageBucket: "capstonedb5.appspot.com",
+  messagingSenderId: "787805221880",
+  appId: "1:787805221880:web:027a4c8854ecabe4a01c0d"
   };
   
   export default firebaseConfig;
