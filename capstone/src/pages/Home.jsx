@@ -2,7 +2,9 @@ import React, { useState, useEffect }  from 'react';
 import './Home.css'
 import Img from '../assets/img-icon.png'
 import {Link} from 'react-router-dom';
+import Calendar from '../components/calendar';
 import Carousel from "react-multi-carousel";
+import Successnotif from '../components/Successnotif';
 import "react-multi-carousel/lib/styles.css";
 import { db } from '../config/firestore';
 import {
@@ -23,6 +25,13 @@ const Home = () => {
       history.push('/login'); // Redirect to login page if not authenticated
     }
   });
+
+  const [successMessage, setSuccessMessage] = useState('');
+
+  const clearSuccessMessage = () => {
+    setSuccessMessage('');
+  };
+
 
   const [isFormVisible, setIsFormVisible] = useState(false);
  
@@ -117,8 +126,12 @@ useEffect(() => {
         time: '',
         reason: '',
       });
+
+      setSuccessMessage('Booking request submitted successfully');
       setIsFormVisible(false);
       setIsSubmitting(false);
+      
+      
     } catch (error) {
       // Handle errors and set isSubmitting to false in case of an error
       console.error('Error adding document: ', error);
@@ -126,6 +139,30 @@ useEffect(() => {
     }
   };
 
+  const [currentSchedule, setCurrentSchedule] = useState(null);
+
+  useEffect(() => {
+    // Fetch data from the "schedules" collection in Firestore
+    const fetchData = async () => {
+      const currentDate = new Date();
+      const schedulesQuery = query(
+        collection(db, 'schedules'),
+        where('Start', '<=', currentDate)
+      );
+      
+
+      const querySnapshot = await getDocs(schedulesQuery);
+
+      if (!querySnapshot.empty) {
+        const scheduleData = querySnapshot.docs[0].data();
+        setCurrentSchedule(scheduleData);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  
 
   
   return (
@@ -135,13 +172,26 @@ useEffect(() => {
       </div>      
       <div className='main-container-of-class-today'>
         <div className='class-today-container'>
-          <p className='lbl-classtoday'>Classes for today / Sunday / July 30 2023</p>   
-          <Link to="/schedule" className='lbl-view'>View</Link>     
+          {currentSchedule ? (
+            <p className='lbl-classtoday'>
+              Class for today: {currentSchedule.Title} / {currentSchedule.Start.toDate().toLocaleDateString()}
+            </p>
+            
+          ) : (
+            <p className='lbl-classtoday'>No classes for today</p>
+          )}
+          <Link to="/schedule" className='lbl-view'>
+            View
+          </Link>
         </div>
-        <div className='free-class'>
-        <p className='lblched'>No Class Your Schedule Is Free Today. Enjoy!</p>
-        </div>
-        
+       
+        {currentSchedule ? ( // Add conditional rendering for Professor, Start time, and End time
+          <div className='lbl_Sched'>
+            <p>Professor: {currentSchedule.Professor}</p>
+            <p>Start time: {currentSchedule.Start.toDate().toLocaleTimeString()}</p>
+            <p>End time: {currentSchedule.End.toDate().toLocaleTimeString()}</p>
+          </div>
+        ) : null}
       </div>
       <div className='suggested-container'>
         <h4>Suggested Room:</h4>
@@ -243,9 +293,20 @@ useEffect(() => {
               
             </button>
           </form>
+            
         </div>
+
       
       )}
+      {successMessage && (
+            <Successnotif
+              message={successMessage}
+              clearMessage={clearSuccessMessage}
+            />
+          )}
+      
+    
+
     
     </div>
   )

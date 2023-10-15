@@ -26,12 +26,18 @@ function NotificationForm({ onClose }) {
       </div>
       <div className='notification-content'>
         {notifications.map((notification, index) => (
-          <div key={index}>
+          <div key={index} className='notification-item'>
             {/* Display notification content, e.g., room booking requests */}
-            <p>
-              Teacher: {notification.teacherName} requested room {notification.roomNumber} on{' '}
-              {notification.date} at {notification.time} for the reason: {notification.reason}
-            </p>
+            <p>Teacher: {notification.teacherName}</p>
+            <p>Requested room: {notification.roomNumber}</p>
+            <p>Date: {notification.date}</p>
+            <p>Time: {notification.time}</p>
+            <p>For the Reason: {notification.reason}</p>
+            <div className='acceptbtn-con'>
+              <button className='acceptBtn'>Accept</button>
+              <button className='declineBtn'>Decline</button>
+            </div>
+            
           </div>
         ))}
       </div>

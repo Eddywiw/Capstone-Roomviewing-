@@ -40,6 +40,8 @@
   }
   
   .notification-content {
+    max-height: 300px; /* Set a maximum height for scrolling */
+    overflow-y: auto; /* Add a vertical scroll bar when content exceeds the max height */
     padding: 20px;
   }
   
@@ -53,3 +55,32 @@
     }
   }
   
+
+  .notification-item {
+    background-color: whitesmoke;
+    border: 1px solid #e1dcdc;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    padding: 12px;
+    transition: background-color 0.3s, transform 0.3s;
+  
+    /* Your styles for notification items go here */
+  }
+  .notification-item:hover {
+    background-color: #e0e0e0; /* Change the background color on hover */
+  }
+  .acceptbtn-con{
+    margin-top: 1rem;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .declineBtn{
+    background: #DC3545;
+  }
+
+  .acceptBtn{
+    background: #199bd3;
+  }
