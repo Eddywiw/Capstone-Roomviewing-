@@ -114,6 +114,18 @@
     
   }
 
+  .notification-icon-user{
+    display: flex; /* Make it a flex item */
+    align-items: center;
+    margin-right: 1rem;  
+    color: white;
+    
+  }
+  .notification-icon-user:hover{
+    cursor: pointer;
+    
+  }
+
   .lbl_nav{
     color: white;
     margin: 1rem;

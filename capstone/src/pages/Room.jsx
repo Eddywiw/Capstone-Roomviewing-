@@ -61,10 +61,9 @@ function Room() {
            {/* Display the image */}
          </div>
          <p className='card-title'>Room: {entry.Roomno}</p>                 
-         <div className='floor-capacity-con'>
-           <p className='card-body'>Floor: {entry.Floor}</p>
-           <p className='card-capacity'>Capacity: {entry.Capacity}</p>
-         </div>                              
+         <p className='card-body'>Floor: {entry.Floor}</p>
+         <p className='card-capacity'>Capacity: {entry.Capacity}</p>
+                                      
          <p className='card-status'>Status: {entry.Status}</p>
          <div className='bookBTN-container'>
             <button className='bookBTN'>Book</button>

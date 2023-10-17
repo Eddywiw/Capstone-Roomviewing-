@@ -53,24 +53,25 @@ function landingPage() {
       
   return (
     <div className='parent' style={gradientStyle}>
-        <img src={logo} className='logo' alt='logo' />
+         
         <div>
           <img src={Modelsti} className='model-img' alt='model' />
         </div>
         
         <div className='maindiv'>
-          <header className="header">
+          <div className="header">
             <h1 className="header-title">View Room <br />anytime,<br />anywhere</h1>
             <div className='sub-container'>
             <p className='sub-header'>Room Viewing makes it easy and fun to find your <br></br>favorite room.</p>
             </div>
-            
-          </header>
-          <form className='login-form' onSubmit={handleLoginFormSubmit}>
+            <form className='login-form' onSubmit={handleLoginFormSubmit}>
             <input className="input" name="email" placeholder="Email" type="text" />
             <input className="input" name="password" placeholder="Password" type="password"  />
             <button className='button-confirm' type='submit'>Log in</button>
           </form>
+            
+          </div>
+         
         </div>
     </div>
   )

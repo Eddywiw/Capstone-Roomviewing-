@@ -1,17 +1,21 @@
 .Room-main-container{
-    background: whitesmoke;
+    background-color: #d2e1e6;
+    position: absolute;
+    height: 100%;
+    width: 100%;
   }
   .filter-container{
       display: flex;
-      
+      margin-bottom: 2rem;
       justify-content: center;
   }
   .card-filter{
       margin: 10px;
   }
   .filter-btn{
+      
       justify-content: center;
-      background: white;
+      background: transparent;
       color: black;
       box-shadow: 0px 5px 13px rgba(0,0,0,0.1);
       cursor: pointer;
@@ -41,9 +45,8 @@
     width: 330px;
     min-height: 370px;
     border-radius: 20px;
-    background: white;
-    box-shadow: 5px 5px 6px #dadada,
-                 -5px -5px 6px #f6f6f6;
+    background: #C1E3ED;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Add the box shadow property */
     transition: 0.4s;
   }
   

@@ -7,12 +7,21 @@ import "../App.css";
 import './navbar.css'
 import LogoutForm from "./LogoutForm";
 import { IconContext } from "react-icons";
-
+import { BsBell } from "react-icons/bs";  
+import NotificationUser from "./NotificationUser";
 function Navbar() {
   const [sidebar, setSidebar] = useState(false);
   const [showLogoutForm, setShowLogoutForm] = useState(false); 
+  const [showNotification, setShowNotification] = useState(false); 
+  const [lblNavText, setLblNavText] = useState("Home");
   const showSidebar = () => setSidebar(!sidebar);
-  
+  const handleNotificationClick = () => {
+    setShowNotification(true);
+  };
+
+  const handleCloseNotification = () => {
+    setShowNotification(false);
+  };
  
   return (
     <>
@@ -22,10 +31,11 @@ function Navbar() {
           <Link to="#" className="menu-bars">
             <FaIcons.FaBars onClick={showSidebar} />
           </Link>
-          <div className="search-bar">
-            <input type="search" placeholder="Search..."/> 
-            {/* You can add a search icon here, if desired */}
-            {/* <FaIcons.FaSearch /> */}
+          <div className="lbl_nav">
+            <p>{lblNavText}</p>
+          </div>
+          <div className="notification-icon-user" onClick={handleNotificationClick}>
+            <BsBell />
           </div>
         </div>
         <nav className={sidebar ? "nav-menu active" : "nav-menu"}>
@@ -44,7 +54,7 @@ function Navbar() {
                       <span>{item.title}</span>
                     </Link>
                   ) : (
-                    <Link to={item.path}>
+                    <Link to={item.path} onClick={() => setLblNavText(item.title)}>
                       {item.icon}
                       <span>{item.title}</span>
                     </Link>
@@ -57,6 +67,9 @@ function Navbar() {
 
         </nav>
         {showLogoutForm && <LogoutForm/>}
+        {showNotification && (
+        <NotificationUser onClose={handleCloseNotification} />
+      )}
       </IconContext.Provider>
     </>
   );

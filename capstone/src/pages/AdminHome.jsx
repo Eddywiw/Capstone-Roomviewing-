@@ -12,12 +12,12 @@ import Chart from 'chart.js/auto';
 function AdminHome() {
   const [totalStudentsBSIT, setTotalStudentsBSIT] = useState(0);
   const [totalStudentsBSBA, setTotalStudentsBSBA] = useState(0);
-
+  const [totalStudentsHRS, setTotalStudentsHRS] = useState(0);
   useEffect(() => {
     // Create references to the "bsit" and "bsba" collections
     const bsitCollection = collection(db, 'bsit');
     const bsbaCollection = collection(db, 'bsba');
-
+    const hrsCollection = collection(db, 'hrs');
     // Listen for changes in the "bsit" collection
     const unsubscribeBSIT = onSnapshot(bsitCollection, (querySnapshot) => {
       setTotalStudentsBSIT(querySnapshot.size);
@@ -28,14 +28,19 @@ function AdminHome() {
       setTotalStudentsBSBA(querySnapshot.size);
     });
 
+    const unsubscribeHRS= onSnapshot(hrsCollection, (querySnapshot) => {
+      setTotalStudentsHRS(querySnapshot.size);
+    });
+
     // Cleanup the listeners when the component unmounts
     return () => {
       unsubscribeBSIT();
       unsubscribeBSBA();
+      unsubscribeHRS();
     };
   }, []);
 
-  const totalStudents = totalStudentsBSIT + totalStudentsBSBA;
+  const totalStudents = totalStudentsBSIT + totalStudentsBSBA + totalStudentsHRS;
 
   // Create a ref for the chart canvas
   const chartRef = useRef();
@@ -73,6 +78,7 @@ function AdminHome() {
             <div className='totalstu_lbl'>
               <p>BSIT: {totalStudentsBSIT}</p>
               <p>BSBA: {totalStudentsBSBA}</p>
+              <p>HRS: {totalStudentsHRS}</p> 
               <p>Total Students: {totalStudents}</p>
             </div>
             <div className='icon-totalstu'>

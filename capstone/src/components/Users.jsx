@@ -1,11 +1,14 @@
 import React, { useState,useEffect } from 'react';
+import Home from '../pages/Home';
 import CreateUser from './CreateUser';
 import UpdateUser from './UpdateUser';
 import InsertEvent from './InsertEvent';
 import { collection, getDocs } from "firebase/firestore";
 import { doc, deleteDoc } from "firebase/firestore";
 import './Users.css'
+import NotificationForm from './Notification';
 import {db} from '../config/firestore'
+
 import Calendar from './calendar';
 function Users() {
     //bago to
@@ -136,6 +139,7 @@ function Users() {
         </table>
       </div>
       
+      
      
       {showUpdateForm && currentUser && <UpdateUser onClose={handleCloseUpdate} currentStudent={currentUser}/>}
       {showInsertForm && currentUser && (
@@ -144,8 +148,7 @@ function Users() {
         </div>
       )}
       {/* Pass the handleStudentAdded function to CreateUser */}
-      {showModal && <CreateUser onClose={handleCloseModals} onStudentAdded={handleStudentAdded} getStudent={getStudent} section={selectedSection}/>}
-
+      {showModal && <CreateUser onClose={handleCloseModals} currentStudent={currentUser} onStudentAdded={handleStudentAdded} getStudent={getStudent} section={selectedSection}/>}
      
     </div>
   );
