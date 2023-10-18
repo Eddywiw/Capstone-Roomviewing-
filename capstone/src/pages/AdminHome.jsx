@@ -74,11 +74,22 @@ function AdminHome() {
           <p>My Dashboard</p>
         </div>
         <div className='tota-con'>
+          <div className='courses'>
+            <p>BSIT: {totalStudentsBSIT}</p>
+            <p>BSBA: {totalStudentsBSBA}</p>
+            <p>HRS: {totalStudentsHRS}</p>
+
+          </div>
+
+          <div className='strands'>
+            <p>GAS: {totalStudentsBSIT}</p>
+            <p>ABM: {totalStudentsBSBA}</p>
+            <p>MAWD: {totalStudentsHRS}</p>
+            <p>CULART: {totalStudentsHRS}</p>
+          </div>
+
           <div className='totalstudents'>
             <div className='totalstu_lbl'>
-              <p>BSIT: {totalStudentsBSIT}</p>
-              <p>BSBA: {totalStudentsBSBA}</p>
-              <p>HRS: {totalStudentsHRS}</p> 
               <p>Total Students: {totalStudents}</p>
             </div>
             <div className='icon-totalstu'>
