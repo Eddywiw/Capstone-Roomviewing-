@@ -2,40 +2,35 @@
 
 .table-container {
  
-  margin-bottom: 2rem;
-  margin-top: 2rem;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  padding: 15px;
-  background-color: #fff;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-  width: 70rem;
-  max-height: 30rem;
-  z-index: 1;
+  width: 100%;
+  margin: 0 auto;
 }
 
 .table {  
-  width: 100%;
   border-collapse: collapse;
-  margin-top: 20px;
+  width: 100%;
   
 }
 
-.table th,
-.table td {
-  padding: 12px;
+th, td {
   text-align: left;
-  border-bottom: 1px solid #ccc;
+  padding: 10px;
+  border-bottom: 1px solid #e0e0e0;
 }
 
-.table th {
-  background-color: #f1f1f1;
+thead {
+  background-color: #f2f2f2;
 }
 
-.table tbody tr:hover {
-  background-color: #f9f9f9;
+
+
+tr:hover {
+  background-color: #e0e0e0;
+}
+
+th {
+  background-color: #107dac;
+  color: white;
 }
 
 .addbtn-container {
@@ -51,15 +46,17 @@
   margin-bottom: 1rem;
   margin-left: 1rem;
   height: 2.3rem;
+  width: 80px;
 }
 .addeventBTN{
-  background-color: royalblue;
+  background-color: rgb(142, 148, 164);
   border-radius: 3px;
   margin-top: 1rem;
   margin-bottom: 1rem;
   margin-left: 1rem;
   height: 2.3rem;
  }
+
 .addbtn:hover {
   background-color: #0056b3;
 }
@@ -76,9 +73,64 @@
   display: flex;
   align-items: center;
   justify-content: center;
-
+  width: 100px;
 }
 
 .button-div button:hover {
   background-color: #0056b3;
+}
+
+.drop-add-con{
+  display: flex;
+  align-items: center;
+  gap: 53rem;
+}
+
+/* DropdownContainer.css (or add this to your existing CSS) */
+.dropdown-con {
+  position: relative;
+  width: 200px; /* Adjust the width as needed */
+  margin: 20px;
+}
+
+/* Style the select element */
+.dropdown-con select {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #d2e1e6;
+  appearance: none; /* Remove default styles in Safari */
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.3s;
+}
+
+/* Style the dropdown arrow icon */
+.dropdown-con select::after {
+  content: "\25BC"; /* Unicode down arrow character */
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  pointer-events: none; /* Ensure the arrow doesn't interfere with clicking */
+}
+
+/* Add styles for the selected option */
+.dropdown-con select option {
+  font-size: 16px;
+  background-color: #fff;
+  color: #333;
+}
+
+/* Style the dropdown when it's focused */
+.dropdown-con select:focus {
+  border-color: #007BFF; /* Change the border color when focused */
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Add a subtle shadow */
+}
+
+/* Style the dropdown on hover */
+.dropdown-con select:hover {
+  border-color: #4238ca;
 }

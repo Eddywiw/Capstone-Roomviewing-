@@ -92,17 +92,20 @@ function Users() {
   return (
     <div className='use-div'>
       <div className='table-container'>
-      <div>
-      <select value={selectedSection} onChange={(event) => setSelectedSection(event.target.value)}>
-        <option value="bsit">BSIT</option>
-        <option value="bsba">BSBA</option>
-        <option value="hrs">HRS</option>
-      </select>
-     
-      </div>
-        <div className='addbtn-container'>
-        <button className='addbtn' onClick={handleAddBtnClick}>Add +</button>
+      <div className='drop-add-con'>
+        <div className='dropdown-con'>
+          <select value={selectedSection} onChange={(event) => setSelectedSection(event.target.value)}>
+          <option value="bsit">BSIT</option>
+          <option value="bsba">BSBA</option>
+          <option value="hrs">HRS</option>
+        </select>
+      
         </div>
+          <div className='addbtn-container'>
+          <button className='addbtn' onClick={handleAddBtnClick}>Add +</button>
+          </div>  
+      </div>  
+      
         <table className='table'>
           <thead>
             <tr>
