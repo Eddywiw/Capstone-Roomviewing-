@@ -1,8 +1,13 @@
 import React from 'react'
-
+import StudentTable from '../components/StudentTable'
 function Students() {
   return (
-    <div>Students</div>
+    <div>
+      <div>
+        <StudentTable/>
+      </div>
+
+    </div>
   )
 }
 

@@ -9,7 +9,7 @@
 .table {  
   border-collapse: collapse;
   width: 100%;
-  
+  background: #90e1ef56;
 }
 
 th, td {
@@ -21,8 +21,6 @@ th, td {
 thead {
   background-color: #f2f2f2;
 }
-
-
 
 tr:hover {
   background-color: #e0e0e0;

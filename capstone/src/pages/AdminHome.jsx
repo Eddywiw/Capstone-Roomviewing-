@@ -82,10 +82,10 @@ function AdminHome() {
           </div>
 
           <div className='strands'>
-            <p>GAS: {totalStudentsBSIT}</p>
-            <p>ABM: {totalStudentsBSBA}</p>
-            <p>MAWD: {totalStudentsHRS}</p>
-            <p>CULART: {totalStudentsHRS}</p>
+            <p>GAS: </p>
+            <p>ABM: </p>
+            <p>MAWD: </p>
+            <p>CULART: </p>
           </div>
 
           <div className='totalstudents'>

@@ -19,7 +19,7 @@ function landingPage() {
       }else {
         clearInterval(interval);
       }
-    }, 50); // Adjust the speed of typing animation by changing the interval in milliseconds
+    }, 30); // Adjust the speed of typing animation by changing the interval in milliseconds
   }, []);
 
   const [texts, setTexts] = useState('');
@@ -35,7 +35,7 @@ function landingPage() {
       }else {
         clearInterval(interval);
       }
-    }, 50); // Adjust the speed of typing animation by changing the interval in milliseconds
+    }, 250); // Adjust the speed of typing animation by changing the interval in milliseconds
   }, []);
   const navigate = useNavigate();
     const gradientStyle = {

@@ -96,9 +96,15 @@ onAuthStateChanged(auth, async (user) => {
       where('Email', '==', user.email)
     );
 
-    const [bsitQuerySnapshot, bsbaQuerySnapshot] = await Promise.all([
+    const proftUserQuery = query(
+      collection(db, 'professor'),
+      where('Email', '==', user.email)
+    );
+
+    const [bsitQuerySnapshot, bsbaQuerySnapshot, profQuerySnapshot] = await Promise.all([
       getDocs(bsitUserQuery),
       getDocs(bsbaUserQuery),
+      getDocs(proftUserQuery)
     ]);
 
     if (!bsitQuerySnapshot.empty) {
@@ -108,6 +114,11 @@ onAuthStateChanged(auth, async (user) => {
       const userData = bsbaQuerySnapshot.docs[0].data();
       setUserName(userData.Name);
     }
+    else if (!profQuerySnapshot.empty) {
+      const userData = profQuerySnapshot.docs[0].data();
+      setUserName(userData.Name);
+    }
+    
   }
 });
 

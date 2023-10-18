@@ -16,19 +16,23 @@
   padding: 0;
   display: flex;
   border: none;
+  border-bottom: none;
 }
 
 .tabs {
   flex: 1; /* Distribute tabs evenly */
   padding: 10px 20px;
   background-color: #107dac; /* Update the tab background color */
-  color: black; /* Update the tab text color */
-  border: none; /* Update the tab border color */
+  color: white; /* Update the tab text color */
+  border: solid 1px white; /* Update the tab border color */
   cursor: pointer;
   text-align: center;
   transition: background-color 0.3s;
   width: 100%;
   max-width: 800px;
+  border-top-right-radius: 10px;
+  border-top-left-radius: 10px;
+  gap: 1rem;
 }
 
 .tabs:hover {

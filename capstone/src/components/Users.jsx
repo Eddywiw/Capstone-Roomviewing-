@@ -3,18 +3,17 @@ import Home from '../pages/Home';
 import CreateUser from './CreateUser';
 import UpdateUser from './UpdateUser';
 import InsertEvent from './InsertEvent';
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, updateDoc } from "firebase/firestore";
 import { doc, deleteDoc } from "firebase/firestore";
 import './Users.css'
 import NotificationForm from './Notification';
 import {db} from '../config/firestore'
 
 import Calendar from './calendar';
+import StudentTable from './StudentTable';
 function Users() {
     //bago to
-    const [selectedSection, setSelectedSection] = useState('bsit'); // Initialize with 'bsit'
-   
-
+    const [selectedSection, setSelectedSection] = useState('bsit'); // Initialize with 'bsit' 
   
     const options = [
       { value: 'BSIT', label: 'BSIT' },
@@ -91,6 +90,7 @@ function Users() {
   };
   return (
     <div className='use-div'>
+
       <div className='table-container'>
       <div className='drop-add-con'>
         <div className='dropdown-con'>
@@ -129,7 +129,6 @@ function Users() {
                 <td>
                   <div className='button-div'>
                     <button onClick={() => handleAddEvent(user)}>Assign</button>
-                    <button>View</button>
                     <button onClick={() => handleUpdateBtnClick(user)} className='editbtn'>Edit</button>
                     <button onClick={() => handleDeleteBtnClick(user.id)} className='deletebtn'>Delete</button>
                   </div>
@@ -141,7 +140,7 @@ function Users() {
           </tbody>
         </table>
       </div>
-      
+
       
      
       {showUpdateForm && currentUser && <UpdateUser onClose={handleCloseUpdate} currentStudent={currentUser}/>}
@@ -152,7 +151,9 @@ function Users() {
       )}
       {/* Pass the handleStudentAdded function to CreateUser */}
       {showModal && <CreateUser onClose={handleCloseModals} currentStudent={currentUser} onStudentAdded={handleStudentAdded} getStudent={getStudent} section={selectedSection}/>}
-     
+      
+      
+      
     </div>
   );
 }

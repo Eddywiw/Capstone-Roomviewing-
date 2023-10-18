@@ -25,7 +25,7 @@ function AdminPage() {
               <Users />
             </div>
           </TabPanel>
-          <TabPanel className="tab-panel">
+          <TabPanel className="tab-panel-con">
             <div className="Professor">
               <Professor />
             </div>
