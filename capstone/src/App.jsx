@@ -12,7 +12,7 @@ import CreateUser from './components/CreateUser';
 import AdminNavbar from './components/AdminNavbar'
 import AdminHome from './pages/AdminHome';
 import ManageRoom from './pages/ManageRoom';
-import ManageSchedule from './pages/ManageSchedule';
+import ManageSubject from './pages/ManageSubject';
 function App() {
   const AppLayout = () => (
     <>
@@ -46,7 +46,7 @@ function App() {
         <Route element={<AppLayoutAdmin />}>
          <Route path="/adminhome" element={<AdminHome/>}/>
          <Route path="/manageroom" element={<ManageRoom/>}/>
-         <Route path="/manageschedule" element={<ManageSchedule/>}/>
+         <Route path="/managesubject" element={<ManageSubject/>}/>
          <Route path="/admin" element={<AdminPage/>}/>
         </Route>
       </Routes>

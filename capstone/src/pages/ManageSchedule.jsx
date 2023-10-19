@@ -6,7 +6,7 @@ import ScheduleTBL from '../components/scheduleTBL';
 function Schedule() {
   return (
     <div className="schedule-container">
-     <ScheduleTBL/>
+  
     </div>
   );
 }

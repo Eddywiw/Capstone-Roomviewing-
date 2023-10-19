@@ -74,6 +74,9 @@ function AdminHome() {
           <p>My Dashboard</p>
         </div>
         <div className='tota-con'>
+          <div className='totalClass-con'>           
+            <p>Total Class: </p>
+          </div>
           <div className='courses'>
             <p>BSIT: {totalStudentsBSIT}</p>
             <p>BSBA: {totalStudentsBSBA}</p>

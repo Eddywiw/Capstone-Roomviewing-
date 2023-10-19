@@ -75,7 +75,20 @@
     justify-content: center;
     flex-direction: column;
     color: white;    
-}  
+}
+
+.totalClass-con{
+    display: flex;
+    background: #107dac;
+    border-radius: 0.5rem;
+    width: 100px;
+    height: 100px;
+    margin: 1rem;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    color: white;    
+}
   
 .lbl_dashboard{
     font-weight: bold;

@@ -1,5 +1,8 @@
-/* Schedule.css */
-
 .schedule-container{
-    background: #d2e1e6;
-}
+    background-color: whitesmoke;
+    display: flex;
+     /* Horizontally center the content */
+     /* Vertically center the content */
+    height: 100vh; /* Set the height to fill the viewport */
+  }
+  

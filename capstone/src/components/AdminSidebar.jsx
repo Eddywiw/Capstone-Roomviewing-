@@ -18,8 +18,8 @@ export const AdminSidebarData = [
     cName: "nav-text",
   },
   {
-    title: "Manage Schedule",
-    path: "/manageschedule",
+    title: "Manage Subject",
+    path: "/managesubject",
     icon: <FaIcons.FaList />,
     cName: "nav-text",
   },
