@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, addDoc, doc, getDoc } from 'firebase/firestore';
 import { db } from '../config/firestore';
 
 function AssignProf() {
   const [professors, setProfessors] = useState([]);
   const [selectedProfessor, setSelectedProfessor] = useState('');
-  const [courses, setCourses] = useState([]); // Add the 'courses' state
-  const [selectedCourse, setSelectedCourse] = useState('');
-
-
-  // Use the useEffect hook to fetch professors and courses from Firestore when the component mounts
+  const [selectedSubject, setSelectedSubject] = useState('');
+  const [subjectList, setSubjectList] = useState([]); // Add subject list state
+  
+  // Use the useEffect hook to fetch professors and subjects from Firestore when the component mounts
   useEffect(() => {
     const fetchProfessors = async () => {
       try {
@@ -24,42 +23,63 @@ function AssignProf() {
       }
     };
 
-    const fetchCourses = async () => {
+    const fetchSubjects = async () => {
       try {
-        const bsitSnapshot = await getDocs(collection(db, 'bsit'));
-        const hrsSnapshot = await getDocs(collection(db, 'hrs'));
-        const bsbaSnapshot = await getDocs(collection(db, 'bsba'));
-
-        const courseList = [];
-
-        bsitSnapshot.forEach((doc) => {
-          courseList.push({ id: doc.id, ...doc.data(), courseName: 'BSIT' });
+        const querySnapshot = await getDocs(collection(db, 'subject'));
+        const subjectList = [];
+        querySnapshot.forEach((doc) => {
+          subjectList.push({ id: doc.id, ...doc.data() });
         });
-
-        hrsSnapshot.forEach((doc) => {
-          courseList.push({ id: doc.id, ...doc.data(), courseName: 'HRS' });
-        });
-
-        bsbaSnapshot.forEach((doc) => {
-          courseList.push({ id: doc.id, ...doc.data(), courseName: 'BSBA' });
-        });
-
-        setCourses(courseList);
+        setSubjectList(subjectList); // Set subject list state
       } catch (error) {
-        console.error('Error fetching courses: ', error);
+        console.error('Error fetching subjects: ', error);
       }
     };
-
+    
     fetchProfessors();
-    fetchCourses();
+    fetchSubjects();
   }, []);
 
   const handleProfessorChange = (event) => {
     setSelectedProfessor(event.target.value);
   };
 
-  const handleCourseChange = (event) => {
-    setSelectedCourse(event.target.value);
+  const handleSubjectChange = (event) => {
+    setSelectedSubject(event.target.value);
+  };
+
+  const handleAssign = async () => {
+    if (selectedProfessor && selectedSubject) {
+      try {
+        // Fetch the name of the selected professor
+        const professorRef = doc(db, 'professor', selectedProfessor);
+        const professorSnap = await getDoc(professorRef);
+        const professorName = professorSnap.data().Name;
+        
+        // Fetch the name of the selected subject
+        const subjectRef = doc(db, 'subject', selectedSubject);
+        const subjectSnap = await getDoc(subjectRef);
+        const subjectName = subjectSnap.data().Subjectname;
+
+        // Create a new document in the "teacher_subject" collection with IDs and names
+        await addDoc(collection(db, "teacher_subject"), {
+          teacherId: selectedProfessor,
+          teacherName: professorName,
+          subjectId: selectedSubject,
+          subjectName: subjectName,
+        });
+
+        // Reset the selected values after assignment
+        setSelectedProfessor('');
+        setSelectedSubject('');
+
+        console.log("Teacher assigned to subject.");
+      } catch (error) {
+        console.error("Error assigning teacher: ", error);
+      }
+    } else {
+      console.error("Please select both a teacher and a subject.");
+    }
   };
 
   return (
@@ -79,21 +99,21 @@ function AssignProf() {
         ))}
       </select>
 
-      <br />
-
-      <label htmlFor="courseSelect">Select a Course:</label>
+      <label htmlFor="subjectSelect">Select a Subject:</label>
       <select
-        id="courseSelect"
-        value={selectedCourse}
-        onChange={handleCourseChange}
+        id="subjectSelect"
+        value={selectedSubject}
+        onChange={handleSubjectChange}
       >
-        <option value="">Select a Course</option>
-        {courses.map((course) => (
-          <option key={course.id} value={course.id}>
-            {course.courseName} - {course.CourseName}
+        <option value="">Select a Subject</option>
+        {subjectList.map((subject) => (
+          <option key={subject.id} value={subject.id}>
+            {subject.Subjectname}
           </option>
         ))}
       </select>
+
+      <button onClick={handleAssign}>Assign Professor to Subject</button>
     </div>
   );
 }

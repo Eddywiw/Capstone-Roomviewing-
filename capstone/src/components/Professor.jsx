@@ -106,7 +106,7 @@ function Professor() {
           </tbody>
         </table>
       </div>
-      {showModal && <CreateProfessor onClose={handleCloseModals} onStudentAdded={handleStudentAdded} getStudent={getStudent}/>}
+      {showModal && <CreateProfessor onClose={handleCloseModals} onStudentAdded={handleStudentAdded} getProfessor={getProfessor}/>}
       
       {showUpdateForm && currentProf && <UpdateProfessor onClose={handleCloseUpdate} currentProf={currentProf} getProfessor={getProfessor}/>}      
       

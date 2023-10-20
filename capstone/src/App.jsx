@@ -13,6 +13,7 @@ import AdminNavbar from './components/AdminNavbar'
 import AdminHome from './pages/AdminHome';
 import ManageRoom from './pages/ManageRoom';
 import ManageSubject from './pages/ManageSubject';
+import ManageTeacher from './pages/ManageTeacher';
 function App() {
   const AppLayout = () => (
     <>
@@ -47,6 +48,7 @@ function App() {
          <Route path="/adminhome" element={<AdminHome/>}/>
          <Route path="/manageroom" element={<ManageRoom/>}/>
          <Route path="/managesubject" element={<ManageSubject/>}/>
+         <Route path="/mngteacher" element={<ManageTeacher/>}/>
          <Route path="/admin" element={<AdminPage/>}/>
         </Route>
       </Routes>

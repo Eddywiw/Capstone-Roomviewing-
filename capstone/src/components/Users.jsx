@@ -143,7 +143,7 @@ function Users() {
 
       
      
-      {showUpdateForm && currentUser && <UpdateUser onClose={handleCloseUpdate} currentStudent={currentUser}/>}
+      {showUpdateForm && currentUser && <UpdateUser onClose={handleCloseUpdate} currentStudent={currentUser} section={selectedSection} getStudent={getStudent}/>}
       {showInsertForm && currentUser && (
         <div className="form-container">
           <InsertEvent onClose={handleCloseModal} onEventAdded={handleEventAdded} eventList={eventList} setEventList={setEventList}  currentStudent={currentUser}/>

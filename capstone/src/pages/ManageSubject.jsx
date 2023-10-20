@@ -5,6 +5,7 @@ import './ManageSubject.css'
 import AddSubject from '../components/AddSubject';
 import SubjectList from '../components/SubjectList';
 import AssignProf from '../components/AssignProf';
+import ProfessorSubjectTable from '../components/ProfessorSubjectTable';
 function ManageSubject() {
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
   const handleTabSelect = (index) => {
@@ -25,9 +26,9 @@ function ManageSubject() {
             </div>
           </TabPanel>
           <TabPanel className="tab-panel-ko">
-            <div>
+            <div className='addsub-conko'>
               <AssignProf/>
-             
+              <ProfessorSubjectTable/>
             </div>
           </TabPanel>
         </Tabs>

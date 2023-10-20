@@ -3,7 +3,7 @@ import './CreateUser.css';
 import { collection, addDoc } from "firebase/firestore";
 import { db } from '../config/firestore';
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
-function CreateProfessor({ onClose, onStudentAdded}) {
+function CreateProfessor({ onClose, onStudentAdded, getProfessor}) {
   const [newProfesor, setNewProfessor] = useState({
     name: "",
     position: "",

@@ -3,7 +3,7 @@ import './UpdateUser.css';
 import { updateDoc, doc } from 'firebase/firestore';
 import { db } from '../config/firestore';
 
-function UpdateUser({ onClose, currentStudent, getStudent }) {
+function UpdateUser({ onClose, currentStudent, getStudent, section }) {
 
   const [updatedStudent, setUpdatedStudent] = useState({
     name: currentStudent.Name,
@@ -25,7 +25,7 @@ function UpdateUser({ onClose, currentStudent, getStudent }) {
     setIsUpdating(true); // Disable the button during update
 
     try {
-      const studentRef = doc(db, 'bsit', currentStudent.id);
+      const studentRef = doc(db, section, currentStudent.id);
       await updateDoc(studentRef, {
         Name: updatedStudent.name,
         Studentno: updatedStudent.studentNo,
