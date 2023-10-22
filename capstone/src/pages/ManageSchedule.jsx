@@ -1,14 +1,20 @@
 import React from 'react';
-import InsertEvent from '../components/InsertEvent';
 import './ManageSchedule.css';
+import AdminCalendar from '../components/adminCalendar';
+import Calendar from '../components/calendar';
+import InsertEvent from '../components/InsertEvent';
 
 
-function Schedule() {
+function ManageSchedule() {
   return (
-    <div className="schedule-container">
-        <InsertEvent/>
+    <div className="mngschedule-container">
+      <div className='mng-con'>
+      <InsertEvent/>
+      <Calendar/>
+      </div>
+      
     </div>
   );
 }
 
-export default Schedule;
+export default ManageSchedule;

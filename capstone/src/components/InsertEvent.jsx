@@ -3,7 +3,7 @@ import './InsertEvent.css';
 import { collection, addDoc } from "firebase/firestore";
 import { db } from '../config/firestore';
 
-function InsertEvent({onClose,onEventAdded,currentStudent}) {
+function InsertEvent({onClose,onEventAdded}) {
 
   const [newEvent, setNewEvent] = useState({
     title: "",
@@ -20,12 +20,11 @@ function InsertEvent({onClose,onEventAdded,currentStudent}) {
  const handleSubmit = async (event) => {
   event.preventDefault();
   try {
-    // Get the user's ID from the selected user (currentUser)
-    const userId = currentStudent.id; // Assuming currentUser contains the selected student's data
+
 
     // Create a new document in the "schedules" collection with the user's ID
     const docRef = await addDoc(collection(db, "schedules"), {
-      userId,
+      
       Title: newEvent.title,
       Start: new Date(`${newEvent.date} ${newEvent.startTime}`),
       End: new Date(`${newEvent.date} ${newEvent.endTime}`),
@@ -34,8 +33,7 @@ function InsertEvent({onClose,onEventAdded,currentStudent}) {
 
     // Call the onEventAdded callback with the new event data
     onEventAdded({
-      id: docRef.id,
-      userId, // Include the userId in the event data
+      id: docRef.id, // Include the userId in the event data
       Title: newEvent.title,
       Start: new Date(`${newEvent.date} ${newEvent.startTime}`),
       End: new Date(`${newEvent.date} ${newEvent.endTime}`),

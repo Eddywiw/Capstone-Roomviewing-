@@ -3,7 +3,7 @@ import './InsertEvent.css';
 import { updateDoc, doc } from 'firebase/firestore';
 import { db } from '../config/firestore';
 
-function UpdateEvent({ onClose, currentEvent, timedateformat, getEvent }) {
+function UpdateEvent({ onClose, currentEvent, timedateformat, getEvent}) {
   const [isUpdating, setIsUpdating] = useState(false);
   const [updatedEvent, setUpdatedEvent] = useState({
     title: currentEvent.Title,
@@ -17,7 +17,7 @@ function UpdateEvent({ onClose, currentEvent, timedateformat, getEvent }) {
     const { name, value } = event.target;
     setUpdatedEvent({ ...updatedEvent, [name]: value });
   };
-
+  
   const handleSubmit = async (event) => {
     event.preventDefault();
     setIsUpdating(true);
