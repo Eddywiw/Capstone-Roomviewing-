@@ -221,7 +221,7 @@ onAuthStateChanged(auth, async (user) => {
         <h4>Suggested Room:</h4>
         <Link to="/room" className='more-btn'>More</Link>
       </div>
-      <Carousel responsive={responsive} itemClass="carousel-item" className='carousel-container'>
+      <Carousel className='carousel-container' responsive={responsive} itemClass="carousel-item" >
       {roomEntries.map(entry => (
         <div key={entry.id} class="Card">
           <div className='card-image' style={{ backgroundImage: `url(${entry.ImageUrl})` }}></div>

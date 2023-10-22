@@ -1,46 +1,99 @@
-import React, { useState, useEffect } from 'react';
-import { collection, getDocs } from "firebase/firestore";
+import React, { useEffect, useState } from 'react';
+import { collection, getDocs, doc, updateDoc } from 'firebase/firestore';
 import { db } from '../config/firestore';
+import * as XLSX from 'xlsx';
 
-function StudentTable({ selectedSection }) {
-  const [students, setStudents] = useState([]);
+
+function StudentTable() {
+  const [attendanceData, setAttendanceData] = useState([]);
+  const [attendanceStatus, setAttendanceStatus] = useState({});
 
   useEffect(() => {
-    const getStudentsInSection = async () => {
+    const fetchAttendanceData = async () => {
       try {
-        if (selectedSection) { // Check if selectedSection is not empty or undefined
-          const querySnapshot = await getDocs(collection(db, selectedSection));
-          const studentsData = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-          setStudents(studentsData);
-        }
+        const querySnapshot = await getDocs(collection(db, 'attendance'));
+        const attendanceList = [];
+        querySnapshot.forEach((doc) => {
+          attendanceList.push({ id: doc.id, ...doc.data() });
+        });
+        setAttendanceData(attendanceList);
+        // Initialize attendance status with defaults (both present and absent are false)
+        const initialStatus = {};
+        attendanceList.forEach((student) => {
+          initialStatus[student.id] = {
+            present: false,
+            absent: false,
+          };
+        });
+        setAttendanceStatus(initialStatus);
       } catch (error) {
-        console.error("Error fetching students: ", error);
+        console.error('Error fetching attendance data: ', error);
       }
     };
-    getStudentsInSection();
-  }, [selectedSection]);
-  
-  
+    fetchAttendanceData();
+  }, []);
+
+  const handleCheckboxChange = async (studentId, type) => {
+    // Create a reference to the Firestore document for the student
+    const studentRef = doc(db, 'attendance', studentId);
+    
+    // Update the student's attendance status in Firestore
+    await updateDoc(studentRef, {
+      [type]: !attendanceStatus[studentId][type],
+    });
+
+    // Update the local state to reflect the change
+    setAttendanceStatus({
+      ...attendanceStatus,
+      [studentId]: {
+        ...attendanceStatus[studentId],
+        [type]: !attendanceStatus[studentId][type],
+      },
+    });
+  };
+
+  const exportToExcel = () => {
+    const worksheet = XLSX.utils.json_to_sheet(attendanceData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'AttendanceData');
+
+    // Generate the Excel file
+    XLSX.writeFile(workbook, 'attendance_data.xlsx');
+  };
+
 
   return (
-    <div className='students-div'>
-    <h2>Students in {selectedSection} Section</h2>
-    <table className='students-table'>
+    <div>
+    <h2>Attendance Table</h2>
+    <button onClick={exportToExcel}>Export to Excel</button>
+    <table>
       <thead>
         <tr>
           <th>Name</th>
-          <th>Student no.</th>
-          <th>Email</th>
-          {/* Add more columns as needed */}
+          <th>Student No</th>
+          <th>Present</th>
+          <th>Absent</th>
         </tr>
       </thead>
       <tbody>
-        {students.map((student, index) => (
-          <tr key={index}>
+        {attendanceData.map((student) => (
+          <tr key={student.id}>
             <td>{student.Name}</td>
             <td>{student.Studentno}</td>
-            <td>{student.Email}</td>
-            {/* Add more columns as needed */}
+            <td>
+              <input
+                type="checkbox"
+                checked={attendanceStatus[student.id]?.present || false}
+                onChange={() => handleCheckboxChange(student.id, 'present')}
+              />
+            </td>
+            <td>
+              <input
+                type="checkbox"
+                checked={attendanceStatus[student.id]?.absent || false}
+                onChange={() => handleCheckboxChange(student.id, 'absent')}
+              />
+            </td>
           </tr>
         ))}
       </tbody>

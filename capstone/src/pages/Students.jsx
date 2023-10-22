@@ -1,8 +1,9 @@
 import React from 'react'
 import StudentTable from '../components/StudentTable'
+import './student.css'
 function Students() {
   return (
-    <div>
+    <div className='Managestudent-con'>
       <div>
         <StudentTable/>
       </div>

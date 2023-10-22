@@ -1,12 +1,12 @@
 import React from 'react';
-import 'react-big-calendar/lib/css/react-big-calendar.css';
+import InsertEvent from '../components/InsertEvent';
 import './ManageSchedule.css';
-import ScheduleTBL from '../components/scheduleTBL';
+
 
 function Schedule() {
   return (
     <div className="schedule-container">
-  
+        <InsertEvent/>
     </div>
   );
 }

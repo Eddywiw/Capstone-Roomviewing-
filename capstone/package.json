@@ -24,7 +24,8 @@
     "react-router-dom": "^6.14.2",
     "react-tabs": "^6.0.2",
     "uuid": "^9.0.1",
-    "xlsx": "^0.18.5"
+    "xlsx": "^0.18.5",
+    "xlsx-style": "^0.8.13"
   },
   "devDependencies": {
     "@types/react": "^18.2.15",
