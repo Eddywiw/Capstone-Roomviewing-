@@ -24,6 +24,7 @@ function Calendar() {
         title: doc.data().Title,
         start: doc.data().Start.toDate(),
         end: doc.data().End.toDate(),
+        professor: doc.data().Professor
       }));
       setEventList(eventsData);
     } catch (error) {
@@ -54,7 +55,12 @@ function Calendar() {
       <div className="modern-calendar-container">
         <BigCalendar
           localizer={localizer}
-          events={eventList}
+          events={eventList.map((event) => ({
+            id: event.id,
+            title: `${event.title} - ${event.professor}`,
+            start: event.start,
+            end: event.end,
+          }))}
           startAccessor="start"
           endAccessor="end"
           onSelectEvent={handleEventClick}

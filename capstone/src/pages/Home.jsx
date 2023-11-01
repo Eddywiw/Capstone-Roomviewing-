@@ -80,12 +80,11 @@ useEffect(() => {
   fetchData();
 }, []); // Run this effect only once, similar to componentDidMount
 
-  
 const [userName, setUserName] = useState('');
 
 onAuthStateChanged(auth, async (user) => {
   if (user) {
-    // Fetch user's name from Firestore based on their email
+    // Fetch user's name from Firestore based on their email (for 'bsit' account)
     const bsitUserQuery = query(
       collection(db, 'bsit'),
       where('Email', '==', user.email)
@@ -96,15 +95,15 @@ onAuthStateChanged(auth, async (user) => {
       where('Email', '==', user.email)
     );
 
-    const proftUserQuery = query(
+    const professorUserQuery = query(
       collection(db, 'professor'),
       where('Email', '==', user.email)
     );
 
-    const [bsitQuerySnapshot, bsbaQuerySnapshot, profQuerySnapshot] = await Promise.all([
+    const [bsitQuerySnapshot, bsbaQuerySnapshot, professorQuerySnapshot] = await Promise.all([
       getDocs(bsitUserQuery),
       getDocs(bsbaUserQuery),
-      getDocs(proftUserQuery)
+      getDocs(professorUserQuery),
     ]);
 
     if (!bsitQuerySnapshot.empty) {
@@ -113,15 +112,12 @@ onAuthStateChanged(auth, async (user) => {
     } else if (!bsbaQuerySnapshot.empty) {
       const userData = bsbaQuerySnapshot.docs[0].data();
       setUserName(userData.Name);
-    }
-    else if (!profQuerySnapshot.empty) {
-      const userData = profQuerySnapshot.docs[0].data();
+    } else if (!professorQuerySnapshot.empty) {
+      const userData = professorQuerySnapshot.docs[0].data();
       setUserName(userData.Name);
     }
-    
   }
 });
-
   const [isSubmitting, setIsSubmitting] = useState(false); 
 
   const [bookingData, setBookingData] = useState({
