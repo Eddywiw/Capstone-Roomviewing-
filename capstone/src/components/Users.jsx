@@ -93,12 +93,16 @@ function Users() {
   const [showModal, setShowModal] = useState(false); // State to control the modal
  
   const handleDeleteBtnClick = async (userId) => {
-    try {
-      await deleteDoc(doc(db, selectedSection, userId));
-      // After successfully deleting the document, update the state to remove the deleted user from the table
-      setUsers((prevUsers) => prevUsers.filter((user) => user.id !== userId));
-    } catch (error) {
-      console.error("Error deleting document: ", error);
+    const confirmDelete = window.confirm("Are you sure you want to delete this User?");
+    
+    if (confirmDelete) {
+      try {
+        await deleteDoc(doc(db, selectedSection, userId));
+        // After successfully deleting the document, update the state to remove the deleted user from the table
+        setUsers((prevUsers) => prevUsers.filter((user) => user.id !== userId));
+      } catch (error) {
+        console.error("Error deleting document: ", error);
+      }
     }
   };
   const handleAddBtnClick = () => {

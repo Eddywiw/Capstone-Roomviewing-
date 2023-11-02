@@ -32,13 +32,18 @@ function ScheduleTBL() {
   };
 
 
+
   const handleDeleteBtnClick = async (userId) => {
-    try {
-      await deleteDoc(doc(db, "schedules", userId));
-      // After successfully deleting the document, update the state to remove the deleted user from the table
-      setEventList((prevEvents) => prevEvents.filter((user) => user.id !== userId));
-    } catch (error) {
-      console.error("Error deleting document: ", error);
+    const confirmDelete = window.confirm("Are you sure you want to delete this Event?");
+    
+    if (confirmDelete) {
+      try {
+        await deleteDoc(doc(db, "schedules", userId));
+        // After successfully deleting the document, update the state to remove the deleted user from the table
+        setEventList((prevEvents) => prevEvents.filter((user) => user.id !== userId));
+      } catch (error) {
+        console.error("Error deleting document: ", error);
+      }
     }
   };
   const handleUpdateBtnClick = (event) => {

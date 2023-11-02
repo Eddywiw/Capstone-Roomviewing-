@@ -36,14 +36,19 @@ function ManageRoom() {
     setIsCreateRoomVisible(false);
   };
   const handleDeleteBtnClick = async (roomId) => {
-    try {
-      await deleteDoc(doc(db, "rooms", roomId));
-      // After successfully deleting the document, update the state to remove the deleted user from the table
-      setRoomEntries((prevUsers) => prevUsers.filter((user) => user.id !== roomId));
-    } catch (error) {
-      console.error("Error deleting document: ", error);
+    const confirmDelete = window.confirm("Are you sure you want to delete this room?");
+    
+    if (confirmDelete) {
+      try {
+        await deleteDoc(doc(db, "rooms", roomId));
+        // After successfully deleting the document, update the state to remove the deleted user from the table
+        setRoomEntries((prevUsers) => prevUsers.filter((user) => user.id !== roomId));
+      } catch (error) {
+        console.error("Error deleting document: ", error);
+      }
     }
   };
+  
   const toggleUpdateRoom = (user) => {
     setCurrentRoom(user);
     setIsUpdateRoomVisible(!isUpdateRoomVisivle);
