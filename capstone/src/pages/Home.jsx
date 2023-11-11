@@ -17,6 +17,8 @@ import {
   where,
   query,
   addDoc,
+  orderBy,
+  limit
 } from 'firebase/firestore';
 const Home = () => {
   const auth = getAuth();
@@ -159,23 +161,31 @@ onAuthStateChanged(auth, async (user) => {
     }
   };
 
+ 
   const [currentSchedule, setCurrentSchedule] = useState(null);
 
   useEffect(() => {
-    // Fetch data from the "schedules" collection in Firestore
-    const fetchData = async () => {
-      const currentDate = new Date();
-      const schedulesQuery = query(
-        collection(db, 'schedules'),
-        where('Start', '<=', currentDate)
-      );
-      
+    const currentDate = new Date(); // Get the current date and time
+    const schedulesQuery = query(
+      collection(db, 'schedules'),
+      where('Start', '<=', currentDate), // Get schedules where the start time is before or equal to the current time
+      orderBy('Start', 'desc'), // Order the schedules by start time in descending order
+      limit(1) // Get the most recent schedule
+    );
 
+    const fetchData = async () => {
       const querySnapshot = await getDocs(schedulesQuery);
 
       if (!querySnapshot.empty) {
         const scheduleData = querySnapshot.docs[0].data();
-        setCurrentSchedule(scheduleData);
+
+        // Check if the current time is within the class time range
+        const classStartTime = scheduleData.Start.toDate();
+        const classEndTime = scheduleData.End.toDate();
+
+        if (currentDate >= classStartTime && currentDate <= classEndTime) {
+          setCurrentSchedule(scheduleData);
+        }
       }
     };
 
@@ -194,7 +204,7 @@ onAuthStateChanged(auth, async (user) => {
         <div className='class-today-container'>
           {currentSchedule ? (
             <p className='lbl-classtoday'>
-              Class for today: {currentSchedule.Title} / {currentSchedule.Start.toDate().toLocaleDateString()}
+              Class for today: {currentSchedule.Title} /{' '} {currentSchedule.Start.toDate().toLocaleDateString()}
             </p>
             
           ) : (

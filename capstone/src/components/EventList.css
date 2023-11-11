@@ -1,0 +1,73 @@
+.eventlist-main{
+ display: flex;
+ gap: 10rem;
+ margin: 3rem;
+
+}
+.lbl-h2sched{
+    margin-bottom: 3rem;
+}
+/* EventList.css */
+
+/* Style the event list */
+.list-div {
+    background-color: #f9f9f9; /* Background color for the list */
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 500px;
+    max-height: 500px; /* Set a maximum height for scrolling */
+    overflow-y: auto; /* Add a vertical scroll bar when content exceeds the max height */
+  }
+  
+  /* Style the heading */
+  .lbl-h2sched {
+    font-size: 24px; /* Adjust the font size as needed */
+    margin-bottom: 10px;
+  }
+  
+  /* Style the individual event items */
+  .list-div ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .list-div li {
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    padding: 10px;
+  }
+  
+  /* Style the event details */
+  .list-div li p {
+    font-size: 16px; /* Adjust the font size as needed */
+    margin: 0;
+  }
+  
+  .list-div li h4 {
+    font-size: 18px; /* Adjust the font size as needed */
+    margin: 0;
+    color: #007bff; /* Customize the title color */
+  }
+  
+  .list-div li p.date {
+    font-weight: bold;
+  }
+  
+  .list-div li p.time {
+    color: #888;
+  }
+  
+  /* Add hover effect for better interactivity */
+  .list-div li:hover {
+    background-color: #f0f0f0;
+  }
+  
+
+
+
+  
+  
+  
