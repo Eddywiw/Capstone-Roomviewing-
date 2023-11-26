@@ -6,6 +6,7 @@ import Calendar from '../components/calendar';
 import Carousel from "react-multi-carousel";
 import Successnotif from '../components/Successnotif';
 import "react-multi-carousel/lib/styles.css";
+import RoomSched from '../components/RoomSched';
 import { db } from '../config/firestore';
 import {
   getAuth,
@@ -192,6 +193,21 @@ onAuthStateChanged(auth, async (user) => {
     fetchData();
   }, []);
 
+
+  const [roomsked, setRoomsked] = useState(false);
+  const [currentRoomNumber, setCurrentRoomNumber] = useState('');
+  const showRoomsked = (roomNumber) => {
+    setRoomsked(true);
+    setCurrentRoomNumber(roomNumber); // Add a state to store the current room number
+  };
+  
+
+  // Function to hide the form/modal
+  const hideRoomsked = () => {
+    setRoomsked(false);
+  };
+
+ 
   
 
   
@@ -230,7 +246,7 @@ onAuthStateChanged(auth, async (user) => {
       <Carousel className='carousel-container' responsive={responsive} itemClass="carousel-item" >
       {roomEntries.map(entry => (
         <div key={entry.id} class="Card">
-          <div className='card-image' style={{ backgroundImage: `url(${entry.ImageUrl})` }}></div>
+          <div onClick={() => showRoomsked(entry.Roomno)} className='card-image' style={{ backgroundImage: `url(${entry.ImageUrl})` }}></div>
           <p className="card-title">Room: {entry.Roomno}</p>
           <p className="card-body">
            Floor: {entry.Floor}
@@ -335,6 +351,11 @@ onAuthStateChanged(auth, async (user) => {
               clearMessage={clearSuccessMessage}
             />
           )}
+
+      {roomsked && (
+        <RoomSched onclose={hideRoomsked} currentRoomNumber={currentRoomNumber} />
+
+      )}    
       
     
 
