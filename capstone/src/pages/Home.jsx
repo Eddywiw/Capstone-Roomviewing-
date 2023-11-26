@@ -238,6 +238,7 @@ onAuthStateChanged(auth, async (user) => {
           <p className='card-capacity'>Capacity: {entry.Capacity}</p>
           <p className='card-status'>Status: {entry.Status}</p>
           <div className='bookBTN-container'>
+          
             <button onClick={showForm} className='bookBTN'>Book</button>
           </div>          
         </div>

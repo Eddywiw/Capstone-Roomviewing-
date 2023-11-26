@@ -60,7 +60,7 @@ const EventList = () => {
           <ul>
             {events.map((event) => (
               <li key={event.id}>
-                {event.Title} - {event.Professor} <br /> Date: {event.Start.toDate().toLocaleDateString()} | Start: {event.Start.toDate().toLocaleTimeString()} - End: {event.End.toDate().toLocaleTimeString()}
+                Room no: {event.Roomno} | {event.Title} - {event.Professor} <br /> Date: {event.Start.toDate().toLocaleDateString()} | Start: {event.Start.toDate().toLocaleTimeString()} - End: {event.End.toDate().toLocaleTimeString()}
               </li>
             ))}
           </ul>

@@ -30,12 +30,6 @@ export const AdminSidebarData = [
     cName: "nav-text",
   },
   {
-    title: "Manage Teacher",
-    path: "/mngteacher",
-    icon: <IoIcons.IoMdPeople />,
-    cName: "nav-text",
-  },
-  {
     title: "Manage Schedule",
     path: "/mngSchedule",
     icon: <IoIcons.IoMdPeople />,

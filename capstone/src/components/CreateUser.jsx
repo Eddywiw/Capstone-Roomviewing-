@@ -1,17 +1,19 @@
 import React, { useState } from 'react';
 import './CreateUser.css';
-import { collection, addDoc } from "firebase/firestore";
+import { collection, addDoc, getDocs } from "firebase/firestore";
 import { db } from '../config/firestore';
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 function CreateUser({ onClose, onStudentAdded, section}) {
   const [newStudent, setNewStudent] = useState({
+    enrollmentStatus: "",
     name: "",
     studentNo: "",
     section: "",
     email: "",
-    password: ""
+    password: "",
+    
   });
-  
+    
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -20,6 +22,16 @@ function CreateUser({ onClose, onStudentAdded, section}) {
 
   async function handleSubmit(event) {
     event.preventDefault();
+  
+    // Check if the student with the same student number already exists
+    const existingStudentQuery = collection(db, section);
+    const existingStudentSnapshot = await getDocs(existingStudentQuery);
+    const existingStudents = existingStudentSnapshot.docs.map((doc) => doc.data());
+  
+    if (existingStudents.some((student) => student.Studentno === newStudent.studentNo)) {
+      alert('A user with the same student number already exists. Please use a different student number.');
+      return;
+    }
   
     try {
       const auth = getAuth();
@@ -34,6 +46,7 @@ function CreateUser({ onClose, onStudentAdded, section}) {
   
       // Now you can proceed to add student data to Firestore
       const docRef = await addDoc(collection(db, section), {
+        EnrollmentStatus: newStudent.enrollmentStatus,
         Name: newStudent.name,
         Studentno: newStudent.studentNo,
         Section: newStudent.section,
@@ -43,6 +56,7 @@ function CreateUser({ onClose, onStudentAdded, section}) {
   
       // Call the onStudentAdded callback with the new student data
       onStudentAdded({
+        EnrollmentStatus: newStudent.enrollmentStatus,
         Name: newStudent.name,
         Studentno: newStudent.studentNo,
         Section: newStudent.section,
@@ -57,6 +71,7 @@ function CreateUser({ onClose, onStudentAdded, section}) {
   
       // Clear the form inputs after successful addition
       setNewStudent({
+        enrollmentStatus: '',
         name: '',
         studentNo: '',
         section: '',
@@ -75,6 +90,19 @@ function CreateUser({ onClose, onStudentAdded, section}) {
       </button>
       <span className="title">Add Student</span>
       <form className="form" onSubmit={handleSubmit}>
+      <div className="group">
+          <label htmlFor="enrollmentStatus">Enrollment Status:</label>
+          <select
+            name="enrollmentStatus"
+            value={newStudent.enrollmentStatus}
+            onChange={handleChange}
+            required
+          >
+            <option value="">Select Status</option>
+            <option value="Regular">Regular</option>
+            <option value="Irregular">Irregular</option>
+          </select>
+        </div>
         <div className="group">
           <input
             placeholder=""
@@ -98,16 +126,19 @@ function CreateUser({ onClose, onStudentAdded, section}) {
           <label htmlFor="studentno">Student No:</label>
         </div>
         <div className="group">
-          <input
-            placeholder=""
-            type="text"
+          <label htmlFor="section">Section:</label>
+          <select
             name="section"
             value={newStudent.section}
             onChange={handleChange}
             required
-          />
-          <label htmlFor="section">Section:</label>
+          >
+            <option value="">Select Section</option>
+            <option value="BSIT 41-A">BSIT 41-A</option>
+            <option value="BSIT 41-B">BSIT 41-B</option>
+          </select>
         </div>
+        
         <div className="group">
           <input
             placeholder=""

@@ -51,6 +51,7 @@ function Users() {
           console.log("Adding data to Firestore:", row);
     
           const docRef = await addDoc(collection(db, selectedSection), {
+            EnrollmentStatus: row.EnrollmentStatus, 
             Name: row.Name,
             Studentno: row.Studentno,
             Section: row.Section,
@@ -159,6 +160,7 @@ function Users() {
         <table className='table'>
           <thead>
             <tr>
+              <th>Enrollment Status</th>
               <th>Name</th>
               <th>Student no.</th>
               <th>Section</th>
@@ -171,6 +173,7 @@ function Users() {
             {
             users.map((user, index) => (
               <tr key={index}>
+                <td>{user.EnrollmentStatus}</td>
                 <td>{user.Name}</td>
                 <td>{user.Studentno}</td>
                 <td>{user.Section}</td>
@@ -178,7 +181,7 @@ function Users() {
                 <td>{user.Password}</td>
                 <td>
                   <div className='button-div'>
-                    <button onClick={() => handleAddEvent(user)}>Assign</button>
+
                     <button onClick={() => handleUpdateBtnClick(user)} className='editbtn'>Edit</button>
                     <button onClick={() => handleDeleteBtnClick(user.id)} className='deletebtn'>Delete</button>
                   </div>
