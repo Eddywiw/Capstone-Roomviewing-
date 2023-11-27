@@ -166,39 +166,58 @@ onAuthStateChanged(auth, async (user) => {
   const [currentSchedule, setCurrentSchedule] = useState(null);
 
   useEffect(() => {
-    const currentDate = new Date(); // Get the current date and time
-    const schedulesQuery = query(
-      collection(db, 'schedules'),
-      where('Start', '<=', currentDate), // Get schedules where the start time is before or equal to the current time
-      orderBy('Start', 'desc'), // Order the schedules by start time in descending order
-      limit(1) // Get the most recent schedule
-    );
-
     const fetchData = async () => {
-      const querySnapshot = await getDocs(schedulesQuery);
-
-      if (!querySnapshot.empty) {
-        const scheduleData = querySnapshot.docs[0].data();
-
-        // Check if the current time is within the class time range
-        const classStartTime = scheduleData.Start.toDate();
-        const classEndTime = scheduleData.End.toDate();
-
-        if (currentDate >= classStartTime && currentDate <= classEndTime) {
-          setCurrentSchedule(scheduleData);
-        }
-      }
+      const querySnapshot = await getDocs(collection(db, 'rooms'));
+      const roomsData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  
+      // Fetch schedules for each room
+      const fetchSchedulesPromises = roomsData.map(async (room) => {
+        const schedulesQuery = query(
+          collection(db, 'schedules'),
+          where('Roomno', '==', room.Roomno)
+        );
+        const schedulesSnapshot = await getDocs(schedulesQuery);
+        const schedulesData = schedulesSnapshot.docs.map(doc => doc.data());
+  
+        return {
+          ...room,
+          schedules: schedulesData,
+        };
+      });
+  
+      const roomsWithSchedules = await Promise.all(fetchSchedulesPromises);
+      setRoomEntries(roomsWithSchedules);
     };
-
+  
     fetchData();
   }, []);
+  
 
 
   const [roomsked, setRoomsked] = useState(false);
   const [currentRoomNumber, setCurrentRoomNumber] = useState('');
-  const showRoomsked = (roomNumber) => {
+  const showRoomsked = async (roomNumber) => {
     setRoomsked(true);
-    setCurrentRoomNumber(roomNumber); // Add a state to store the current room number
+    setCurrentRoomNumber(roomNumber);
+  
+    // Fetch schedules for the selected room
+    const schedulesQuery = query(
+      collection(db, 'schedules'),
+      where('Roomno', '==', roomNumber)
+    );
+  
+    const querySnapshot = await getDocs(schedulesQuery);
+    const schedulesData = querySnapshot.docs.map(doc => doc.data());
+  
+    setRoomEntries(roomEntries.map(entry => {
+      if (entry.Roomno === roomNumber) {
+        return {
+          ...entry,
+          schedules: schedulesData,
+        };
+      }
+      return entry;
+    }));
   };
   
 
@@ -207,6 +226,26 @@ onAuthStateChanged(auth, async (user) => {
     setRoomsked(false);
   };
 
+  const isRoomAvailable = (schedules) => {
+    if (!schedules || schedules.length === 0) {
+      return true; // No schedules, room is available
+    }
+  
+    const currentDate = new Date();
+    const currentTime = currentDate.getTime();
+  
+    for (const schedule of schedules) {
+      const startTime = schedule.Start.toDate().getTime();
+      const endTime = schedule.End.toDate().getTime();
+  
+      if (currentTime >= startTime && currentTime <= endTime) {
+        return false; // Room is booked during this time
+      }
+    }
+  
+    return true; // No overlapping schedules, room is available
+  };
+  
  
   
 
@@ -252,7 +291,9 @@ onAuthStateChanged(auth, async (user) => {
            Floor: {entry.Floor}
           </p>
           <p className='card-capacity'>Capacity: {entry.Capacity}</p>
-          <p className='card-status'>Status: {entry.Status}</p>
+          <p className='card-status'>
+            Status: {isRoomAvailable(entry.schedules) ? 'Available' : 'Not Available'}
+          </p>
           <div className='bookBTN-container'>
           
             <button onClick={showForm} className='bookBTN'>Book</button>
