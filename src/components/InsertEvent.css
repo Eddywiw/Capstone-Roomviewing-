@@ -1,0 +1,113 @@
+/* InsertEvent.css */
+.group {
+    margin-bottom: 20px;
+  }
+  
+  input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+  
+
+  
+  button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  button:hover {
+    background-color: #0056b3;
+  }
+  .form-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* This makes the form cover the entire viewport height */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Add a semi-transparent background overlay */
+    z-index: 9999; /* Ensure the form is on top of other elements */
+  }
+  
+  .formcon {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+    width: 400px; /* Adjust the width as needed */
+    max-width: 400px; /* Limit the width for smaller screens */
+
+  }
+  .form {
+    margin-top: 20px;
+   
+
+  }
+  
+  .group {
+    position: relative;
+  }
+  
+  .formcon .group label {
+    font-size: 14px;
+    color: rgb(99, 102, 102);
+    position: absolute;
+    top: -10px;
+    left: 10px;
+    background-color: #fff;
+    transition: all .3s ease;
+  }
+  
+  .formcon .group input,
+  .formcon .group textarea {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    margin-bottom: 20px;
+    outline: 0;
+    width: 100%;
+    background-color: transparent;
+  }
+  
+  .formcon .group input:placeholder-shown+ label, .formcon .group textarea:placeholder-shown +label {
+    top: 10px;
+    background-color: transparent;
+  }
+  
+  .formcon .group input:focus,
+  .formcon .group textarea:focus {
+    border-color: royalblue;
+  }
+  
+  .formcon .group input:focus+ label, .formcon .group textarea:focus +label {
+    top: -10px;
+    left: 10px;
+    background-color: #fff;
+    color: royalblue;
+    font-weight: 600;
+    font-size: 14px;
+  }
+  
+  .formcon .group textarea {
+    resize: none;
+    height: 100px;
+  }
+  .timecon{
+    display: flex;
+    gap: 1rem;
+  }

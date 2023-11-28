@@ -1,0 +1,77 @@
+/* Add this CSS to your 'Users.css' file or create a new CSS file for styling */
+.Event-table-container {
+  
+  width: 80%;
+  margin: 0 auto;
+ 
+
+}
+
+.Eventtable {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th, td {
+  text-align: left;
+  padding: 10px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+thead {
+  background-color: #f2f2f2;
+}
+
+
+
+tr:hover {
+  background-color: #e0e0e0;
+}
+
+th {
+  background-color: #107dac;
+  color: white;
+}
+
+button {
+  padding: 5px 10px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+button.editbtn {
+  background-color: #199bd3;
+  color: white;
+}
+
+button.deletebtn {
+  background-color: #DC3545;
+  color: white;
+}
+
+.button-div {
+  display: flex;
+  justify-content: space-between;
+}
+
+.use-div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+.form-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.lbl-eventlist{
+  font-size: 20px;
+}
+
+.lbl-eventlist-con{
+  font-weight: bold;
+}

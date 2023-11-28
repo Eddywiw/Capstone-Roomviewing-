@@ -1,0 +1,86 @@
+/* NotificationForm.css */
+.notification-form {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 300px;
+    background-color: whitesmoke;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    z-index: 1000;
+    animation: slideIn 0.3s ease-in-out;
+  }
+  
+  .notification-header {
+    background-color: #107dac;
+    color: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+  }
+  
+  .notification-header h2 {
+    margin: 0;
+    font-size: 18px;
+  }
+  
+  .close-button {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 20px;
+    cursor: pointer;
+  }
+  
+  .close-button:focus {
+    outline: none;
+  }
+  
+  .notification-content {
+    max-height: 300px; /* Set a maximum height for scrolling */
+    overflow-y: auto; /* Add a vertical scroll bar when content exceeds the max height */
+    padding: 20px;
+  }
+  
+  /* Animation to slide in the notification form */
+  @keyframes slideIn {
+    0% {
+      transform: translateX(100%);
+    }
+    100% {
+      transform: translateX(0);
+    }
+  }
+  
+
+  .notification-item {
+    background-color: whitesmoke;
+    border: 1px solid #e1dcdc;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    padding: 12px;
+    transition: background-color 0.3s, transform 0.3s;
+  
+    /* Your styles for notification items go here */
+  }
+  .notification-item:hover {
+    background-color: #e0e0e0; /* Change the background color on hover */
+  }
+  .acceptbtn-con{
+    margin-top: 1rem;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .declineBtn{
+    background: #DC3545;
+  }
+
+  .acceptBtn{
+    background: #199bd3;
+  }

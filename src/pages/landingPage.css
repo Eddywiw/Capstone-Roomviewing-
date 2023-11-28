@@ -1,0 +1,68 @@
+.parent{
+    overflow: hidden;
+  }
+  .header{
+    margin: 100px;    
+  }
+  .header-title{
+    font-size: 80px;
+    color: blue;
+    margin-bottom: 20px;
+    font-family: 'Belanosima', sans-serif;
+  }
+  .sub-header{
+    font-family: 'Roboto Mono', monospace;
+  }
+  .login-form{
+    display: grid;
+    
+    
+  }
+  
+  .input{
+    margin-top: 5px;
+    margin-bottom: 5px;
+    width: 300px;
+    height: 40px;
+    border: none;
+    border-radius: 5px;
+    padding-left: 1rem;
+  }
+  .button-confirm{
+    width: 100px;
+    height: 40px;
+    border: none;
+    border-radius: 50px;
+    color: white;
+    background-color: blue;
+    margin-top: 5px;
+    text-decoration: none;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+  }
+  .button-confirm:hover {
+    background-color: darkblue; /* Apply a different color on hover */
+  }
+  .logo{
+    position: absolute;
+    width: 150px;
+    height: 140px;
+    bottom: 550px;
+    
+  }
+  .model-img{
+    height: 100vh;
+    position: absolute;
+    margin-left: 700px;
+  }
+  .sub-container{
+    margin-bottom: 10px;
+  }
+  .login-form{
+    background: transparent;
+  }
+  .maindiv{
+    
+    margin-left: 5rem;  
+  }

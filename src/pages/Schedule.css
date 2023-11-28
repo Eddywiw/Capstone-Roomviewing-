@@ -1,0 +1,8 @@
+.schedule-container{
+    background-color: whitesmoke;
+    display: flex;
+     /* Horizontally center the content */
+     /* Vertically center the content */
+    height: 100vh; /* Set the height to fill the viewport */
+  }
+  

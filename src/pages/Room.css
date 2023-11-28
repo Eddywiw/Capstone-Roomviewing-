@@ -1,0 +1,121 @@
+.Room-main-container{
+    background-color: #d2e1e6;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+  }
+  .filter-container{
+      display: flex;
+      margin-bottom: 2rem;
+      justify-content: center;
+  }
+  .card-filter{
+      margin: 10px;
+  }
+  .filter-btn{
+      
+      justify-content: center;
+      background: transparent;
+      color: black;
+      box-shadow: 0px 5px 13px rgba(0,0,0,0.1);
+      cursor: pointer;
+      border-radius: 50px;
+      height: 30px;
+      font-size: 1rem;
+      width: 100px;
+  }
+  .filter-btn:hover{
+    background: royalblue;
+    border-radius: 5px;
+    color: white;
+  }
+  
+  .card-container2{
+    margin-top: 4rem;
+      margin-left: 3rem;
+      margin-right: 3rem;
+      display: flex;
+      justify-content: center;
+      gap: 4rem;
+      z-index: 1;
+  }
+  
+  .Card {
+    padding: 20px;
+    width: 330px;
+    min-height: 370px;
+    border-radius: 20px;
+    background: #C1E3ED;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Add the box shadow property */
+    transition: 0.4s;
+  }
+  
+  .Card:hover {
+    translate: 0 -10px;
+  }
+  
+  .card-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #2e54a7;
+    margin: 15px 0 0 10px;
+  }
+  
+  .card-image {
+    
+    min-height: 170px;
+    background-color: #c9c9c9;
+    border-radius: 15px;
+    
+  }
+  
+  .card-body {
+    margin: 13px 0 0 10px;
+    color: rgb(31, 31, 31);
+    font-size: 15px;
+  }
+  .card-capacity{
+    margin: 13px 0 0 10px;
+    color: rgb(31, 31, 31);
+    font-size: 15px;
+  }
+  .card-status{
+    margin: 13px 0 0 10px;
+    color: rgb(31, 31, 31);
+    font-size: 15px;
+  }
+  .footer {
+    float: right;
+    margin: 28px 0 0 18px;
+    font-size: 13px;
+    color: #636363;
+  }
+  
+  .by-name {
+    font-weight: 700;
+  }
+  .bookBTN{
+    margin: 13px 0 0 10px;
+    border-radius: 5px;
+    background: royalblue;
+    color: white;
+    width: 10rem;
+    height: 3rem;
+    align-items: center;
+    justify-content: center;
+  }
+  .bookBTN:hover{
+    background: transparent;
+    border: #000 3px solid;
+    color: #000;
+  }
+  .bookBTN-container{
+    display: flex;
+    justify-content: center;
+  }
+  .roomdiv{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+  }
