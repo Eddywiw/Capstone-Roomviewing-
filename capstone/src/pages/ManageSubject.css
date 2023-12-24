@@ -6,4 +6,29 @@
 .addsub-conko{
     display: flex;
     gap: 10rem;
+    justify-content: center;
+}
+
+.mngdiv{
+    display: flex;
+    justify-content: center; /* Center content horizontally */
+    height: 100vh;
+    background: #d2e1e6;
+}
+
+.tabsko{
+    flex: 1; /* Distribute tabs evenly */
+    padding: 10px 20px;
+    background-color: #107dac; /* Update the tab background color */
+    color: white; /* Update the tab text color */
+    border: solid 1px white; /* Update the tab border color */
+    cursor: pointer;
+    text-align: center;
+    transition: background-color 0.3s;
+    width: 500px;
+    max-width: 800px;
+    border-top-right-radius: 10px;
+    border-top-left-radius: 10px;
+    gap: 1rem;
+
 }

@@ -14,82 +14,97 @@ function CreateRoom({ onClose, onRoomAdded }) {
     imageurl: null, // Initialize imageurl as null
   });
 
+  const [alertMessage, setAlertMessage] = useState("");
+
   const handleChange = (event) => {
     const { name, value, type } = event.target;
   
     if (type === "file") {
       const file = event.target.files[0];
   
-      // Check the file extension
       const allowedExtensions = ["jpg", "jpeg", "png"];
       const fileExtension = file.name.split(".").pop().toLowerCase();
   
       if (!allowedExtensions.includes(fileExtension)) {
         alert("Only JPG, JPEG, and PNG files are allowed.");
-        event.target.value = ""; // Clear the file input
+        event.target.value = "";
         return;
       }
-    
-      // Update the imageurl with the selected file
+  
       setNewRoom({ ...newRoom, [name]: file });
     } else if (name === "start" || name === "end") {
       const [hours, minutes] = value.split(":");
       const formattedTime = `${hours}:${minutes}`;
       setNewRoom({ ...newRoom, [name]: formattedTime });
+    } else if (name === "capacity") {
+      // Validate that the input is a number
+      const isValidNumber = /^\d+$/.test(value);
+  
+      if (!isValidNumber) {
+        alert("Please enter a valid number for Capacity.");
+        return;
+      }
+  
+      setNewRoom({ ...newRoom, [name]: value });
     } else {
       setNewRoom({ ...newRoom, [name]: value });
     }
-  };  
+  };
+  
 
   const handleSubmit = async (event) => {
-    event.preventDefault();
-  
-    // Check if the room with the same room number already exists
-    const existingRoomQuery = collection(db, "rooms");
-    const existingRoomSnapshot = await getDocs(existingRoomQuery);
-    const existingRooms = existingRoomSnapshot.docs.map((doc) => doc.data());
-  
-    if (existingRooms.some((room) => room.Roomno === newRoom.roomnum)) {
-      alert('A room with the same room number already exists. Please use a different room number.');
-      return;
-    }
-  
-    try {
-      const uniqueFilename = uuidv4();
-      const imageRef = ref(storage, `images/${uniqueFilename}`);
-      await uploadBytes(imageRef, newRoom.imageurl);
-      const imageUrl = await getDownloadURL(imageRef);
-  
-      const docRef = await addDoc(collection(db, "rooms"), {
-        Roomno: newRoom.roomnum,
-        Floor: newRoom.floor,
-        Capacity: newRoom.capacity,
-        Status: newRoom.status,
-        ImageUrl: imageUrl,
-      });
-  
-      onRoomAdded({
-        Roomno: newRoom.roomnum,
-        Floor: newRoom.floor,
-        Capacity: newRoom.capacity,
-        Status: newRoom.status,
-        ImageUrl: imageUrl,
-      });
-  
-      console.log("Document written with ID: ", docRef.id);
-      onClose();
-      setNewRoom({
-        roomnum: "",
-        floor: "",
-        capacity: "",
-        status: "",
-        imageurl: null, // Reset imageurl to null
-      });
-    } catch (error) {
-      console.error("Error adding document: ", error);
-    }
-  };
-      
+  event.preventDefault();
+
+  const existingRoomQuery = collection(db, "rooms");
+  const existingRoomSnapshot = await getDocs(existingRoomQuery);
+  const existingRooms = existingRoomSnapshot.docs.map((doc) => doc.data());
+
+  if (existingRooms.some((room) => room.Roomno === newRoom.roomnum)) {
+    setAlertMessage('A room with the same room number already exists. Please use a different room number.');
+    return;
+  }
+
+  try {
+    const uniqueFilename = uuidv4();
+    const imageRef = ref(storage, `images/${uniqueFilename}`);
+    await uploadBytes(imageRef, newRoom.imageurl);
+    const imageUrl = await getDownloadURL(imageRef);
+
+    const docRef = await addDoc(collection(db, "rooms"), {
+      Roomno: newRoom.roomnum,
+      Floor: newRoom.floor,
+      Capacity: newRoom.capacity,
+      Status: newRoom.status,
+      ImageUrl: imageUrl,
+    });
+
+    onRoomAdded({
+      Roomno: newRoom.roomnum,
+      Floor: newRoom.floor,
+      Capacity: newRoom.capacity,
+      Status: newRoom.status,
+      ImageUrl: imageUrl,
+    });
+
+    setAlertMessage("Room successfully added!");
+    
+    // Display alert when the room is successfully added
+    window.alert("Room successfully added!");
+
+    onClose();
+    setNewRoom({
+      roomnum: "",
+      floor: "",
+      capacity: "",
+      status: "",
+      imageurl: null,
+    });
+  } catch (error) {
+    console.error("Error adding document: ", error);
+    setAlertMessage("Error adding room. Please try again.");
+  }
+};
+
   return (
     <div className='usemain'>
       <button className="exit-btn" onClick={onClose}>
@@ -154,18 +169,23 @@ function CreateRoom({ onClose, onRoomAdded }) {
             placeholder=""
             type="file"
             name="imageurl"
-            accept=".jpg, .jpeg, .png"           
+            accept=".jpg, .jpeg, .png"
             onChange={handleChange}
             required
           />
-          
         </div>
         <button className='addstubtn' type="submit">
           Add
         </button>
+
+        {alertMessage && (
+          <div className="alert-message">
+            {alertMessage}
+          </div>
+        )}
       </form>
     </div>
-  )
+  );
 }
 
-export default CreateRoom
+export default CreateRoom;

@@ -98,8 +98,6 @@ function Professor() {
                 <td>{user.Password}</td>
                 <td>
                   <div className='button-div'>
-                  <button>Schedule</button>
-                  <button>Section</button>
                   <button className='editbtn'onClick={() => handleUpdateBtnClick(user)}>Edit</button>
                   <button className='deletebtn' onClick={() => handleDeleteBtnClick(user.id)}>Delete</button>
                   </div>

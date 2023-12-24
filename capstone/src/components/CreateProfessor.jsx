@@ -51,6 +51,8 @@ function CreateProfessor({ onClose, onStudentAdded, getProfessor}) {
   
       // Close the CreateUser modal after successful addition
       onClose();
+          // Display alert when the room is successfully added
+      window.alert("Professor successfully added!");
   
       // Clear the form inputs after successful addition
       setNewProfessor({

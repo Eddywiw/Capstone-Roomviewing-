@@ -1,31 +1,32 @@
-import React from 'react';
-// NotificationUser.js
-import { useNotificationContext } from './NotificationContext';
+import React, { useEffect, useState } from 'react';
 
-function NotificationUser({ onClose }) {
-  const { requestAccepted } = useNotificationContext();
+function NotificationUser({ requestAccepted }) {
+  const [notificationMessage, setNotificationMessage] = useState('');
+
+  useEffect(() => {
+    // Set the notification message based on whether the request is accepted
+    if (requestAccepted) {
+      setNotificationMessage('Your booking request has been accepted!');
+    } else {
+      setNotificationMessage('Your booking request has been declined.');
+    }
+
+    // Reset the notification message after a delay (e.g., 5 seconds)
+    const timeoutId = setTimeout(() => {
+      setNotificationMessage('');
+    }, 5000);
+
+    // Clear the timeout when the component unmounts
+    return () => clearTimeout(timeoutId);
+  }, [requestAccepted]);
 
   return (
-    <div className='notification-form'>
-      <div className='notification-header'>
-        <h2>Notification</h2>
-        <button className='close-button' onClick={onClose}>
-          &times;
-        </button>
-      </div>
-      <div className='notification-content'>
-        {requestAccepted ? (
-          <div className='accepted-message'>
-            <p>Your request has been approved by the admin.</p>
-            {/* Display other details of the accepted request if needed */}
-          </div>
-        ) : (
-          <p>No new notifications</p>
-        )}
-      </div>
+    <div className='notification-user'>
+      {notificationMessage && (
+        <div className='notification-message'>{notificationMessage}</div>
+      )}
     </div>
   );
 }
-
 
 export default NotificationUser;

@@ -10,6 +10,29 @@
     z-index: 1;
 }
 .addstubtn{
+    border-radius: 5px;
+    background: #199bd3;
     align-items: center;
     justify-content: center;
+}
+
+/* Add this style to customize the dropdown */
+.form .group select {
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  margin-bottom: 20px;
+  outline: 0;
+  width: 100%;
+  background-color: transparent;
+  appearance: none; /* Remove default styles on Chrome/Safari */
+  -webkit-appearance: none; /* Remove default styles on Firefox */
+  background-image: url('data:image/svg+xml;utf8,<svg fill="#000000" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z" /><path d="M0 0h24v24H0z" fill="none" /></svg>'); /* Add a custom arrow icon */
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+}
+
+/* Add style for the focused state of the dropdown */
+.form .group select:focus {
+  border-color: royalblue;
 }

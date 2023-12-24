@@ -1,15 +1,17 @@
 /* Add this CSS to your 'Users.css' file or create a new CSS file for styling */
 .Event-table-container {
-  
   width: 80%;
   margin: 0 auto;
- 
+  max-height: 400px; /* Set a maximum height for scrolling */
+  overflow-y: auto; /* Add a vertical scroll bar when content exceeds the max height */
+
 
 }
 
 .Eventtable {
   border-collapse: collapse;
   width: 100%;
+  
 }
 
 th, td {

@@ -1,0 +1,14 @@
+.profeditcon{
+    display: flex;
+    gap: 20px;
+}
+
+.editbtnko{
+    background: #199bd3;
+    border-radius: 5px;
+}
+
+.deletebtnko{
+    background: #199bd3;
+    border-radius: 5px;
+}

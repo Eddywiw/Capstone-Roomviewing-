@@ -15,6 +15,7 @@ import ManageRoom from './pages/ManageRoom';
 import ManageSubject from './pages/ManageSubject';
 import ManageTeacher from './pages/ManageTeacher';
 import ManageSchedule from './pages/ManageSchedule'
+import AdminNotification from './pages/AdminNotification';
 function App() {
   const AppLayout = () => (
     <>
@@ -51,6 +52,7 @@ function App() {
          <Route path="/managesubject" element={<ManageSubject/>}/>
          <Route path="/mngteacher" element={<ManageTeacher/>}/>
          <Route path="/mngSchedule" element={<ManageSchedule/>}/>
+         <Route path="/AdminNotification" element={<AdminNotification/>}/>
          <Route path="/admin" element={<AdminPage/>}/>
         </Route>
       </Routes>

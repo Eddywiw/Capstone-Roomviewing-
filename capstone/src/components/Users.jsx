@@ -17,12 +17,30 @@ function Users() {
   
     //bago to
     const [selectedSection, setSelectedSection] = useState('bsit'); // Initialize with 'bsit' 
-  
+    const [selectedYear, setSelectedYear] = useState('all');
+    const [selectedFileName, setSelectedFileName] = useState('');
     const options = [
-      { value: 'BSIT', label: 'BSIT' },
-      { value: 'BSBA', label: 'BSBA' },
-      { value: 'HRS', label: 'HRS' },
+      { value: 'bsit', label: 'BSIT' },
+      { value: 'bsba', label: 'BSBA' },
+      { value: 'hrs', label: 'HRS' },
     ];
+
+    const yearOptions = [
+      { value: 'all', label: 'All' },
+      { value: '41-A', label: '41-A' },
+      { value: '31-A', label: '31-A' },
+      { value: '21-A', label: '21-A' },
+      { value: '11-A', label: '11-A' },
+    ];
+
+    const handleSectionChange = (event) => {
+      setSelectedSection(event.target.value);
+    };
+  
+    const handleYearChange = (event) => {
+      setSelectedYear(event.target.value);
+    };
+  
     const handleExcelUpload = (event) => {
       const file = event.target.files[0];
     
@@ -41,6 +59,9 @@ function Users() {
         };
     
         reader.readAsArrayBuffer(file);
+
+        // Set the selected file name
+        setSelectedFileName(file.name);
       }
     };
     
@@ -54,6 +75,7 @@ function Users() {
             EnrollmentStatus: row.EnrollmentStatus, 
             Name: row.Name,
             Studentno: row.Studentno,
+            Course: row.Program,
             Section: row.Section,
             Email: row.Email,
             Password: row.Password,
@@ -144,17 +166,51 @@ function Users() {
 
       <div className='table-container'>
       <div className='drop-add-con'>
-        <div className='dropdown-con'>
-          <select value={selectedSection} onChange={(event) => setSelectedSection(event.target.value)}>
-          <option value="bsit">BSIT</option>
-          <option value="bsba">BSBA</option>
-          <option value="hrs">HRS</option>
-        </select>
-      
-        </div>
-          <div className='addbtn-container'>
+        <div className='dropdowntwo'>
+        <div className='addbtn-container'>
           <button className='addbtn' onClick={handleAddBtnClick}>Add +</button>
           </div>  
+        <div className='dropdown-con'>
+          <select value={selectedSection} onChange={handleSectionChange}>
+          {options.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+        </select>
+        </div>
+        <div className='dropdown-con'>
+            <select value={selectedYear} onChange={handleYearChange}>
+              {yearOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+
+          
+          </div>
+          <div className="file-input-container">
+            {/* Label for the file input */}
+            <label htmlFor="fileInput" className="file-input-label">
+              Upload Excel File
+            </label>
+            {/* Actual file input, hidden from view */}
+            <input
+              type="file"
+              accept=".xls,.xlsx"
+              id="fileInput"
+              className="file-input"
+              onChange={handleExcelUpload}
+            />
+            {/* Display the selected file name */}
+            {selectedFileName && (
+              <span className="file-name">{selectedFileName}</span>
+            )}
+          </div>
+
       </div>  
       
         <table className='table'>
@@ -163,6 +219,7 @@ function Users() {
               <th>Enrollment Status</th>
               <th>Name</th>
               <th>Student no.</th>
+              <th>Program</th>
               <th>Section</th>
               <th>Email</th>
               <th>Password</th>
@@ -176,6 +233,7 @@ function Users() {
                 <td>{user.EnrollmentStatus}</td>
                 <td>{user.Name}</td>
                 <td>{user.Studentno}</td>
+                <td>{user.Course}</td>
                 <td>{user.Section}</td>
                 <td>{user.Email}</td>
                 <td>{user.Password}</td>
@@ -192,7 +250,7 @@ function Users() {
             }
           </tbody>
         </table>
-        <input type="file" accept=".xls,.xlsx" onChange={handleExcelUpload} />
+
 
 
 
@@ -202,10 +260,15 @@ function Users() {
      
       {showUpdateForm && currentUser && <UpdateUser onClose={handleCloseUpdate} currentStudent={currentUser} section={selectedSection} getStudent={getStudent}/>}
       {showInsertForm && currentUser && (
-        <div className="form-container">
-          <InsertEvent onClose={handleCloseModal} onEventAdded={handleEventAdded} eventList={eventList} setEventList={setEventList}  currentStudent={currentUser}/>
-        </div>
-      )}
+          <div className="form-container">
+            <InsertEvent
+              eventList={eventList}
+              setEventList={setEventList}
+              currentStudent={currentUser}
+            />
+          </div>
+        )}
+
       {/* Pass the handleStudentAdded function to CreateUser */}
       {showModal && <CreateUser onClose={handleCloseModals} currentStudent={currentUser} onStudentAdded={handleStudentAdded} getStudent={getStudent} section={selectedSection}/>}
       

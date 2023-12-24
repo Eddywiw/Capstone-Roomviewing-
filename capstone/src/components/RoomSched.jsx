@@ -31,20 +31,24 @@ function RoomSched({ onclose, currentRoomNumber }) {
       <button onClick={onclose} className='exit-btn'>
         X
       </button>
-      <ul className='schedule-list'>
-        {schedules.map((schedule) => (
-          <li key={schedule.id} className='schedule-item'>
-            <div>
-              <strong>{schedule.Title}</strong> - {schedule.Professor}
-            </div>
-            <div>
-              Date: {schedule.Start.toDate().toLocaleDateString()} | 
-              Start: {schedule.Start.toDate().toLocaleTimeString()} - 
-              End: {schedule.End.toDate().toLocaleTimeString()}
-            </div>
-          </li>
-        ))}
-      </ul>
+      {schedules.length === 0 ? (
+        <p>No Schedule Assign</p>
+      ) : (
+        <ul className='schedule-list'>
+          {schedules.map((schedule) => (
+            <li key={schedule.id} className='schedule-item'>
+              <div>
+                <strong>{schedule.Title}</strong> - {schedule.Professor} <br/>Section: <strong>{schedule.Section}</strong>
+              </div>
+              <div>
+                Date: {schedule.Start.toDate().toLocaleDateString()} | 
+                Start: {schedule.Start.toDate().toLocaleTimeString()} - 
+                End: {schedule.End.toDate().toLocaleTimeString()}
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }

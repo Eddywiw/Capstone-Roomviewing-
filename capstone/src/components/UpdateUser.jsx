@@ -8,6 +8,7 @@ function UpdateUser({ onClose, currentStudent, getStudent, section }) {
   const [updatedStudent, setUpdatedStudent] = useState({
     name: currentStudent.Name,
     studentNo: currentStudent.Studentno,
+    course: currentStudent.Course,
     section: currentStudent.Section,
     email: currentStudent.Email,
     password: currentStudent.Password
@@ -29,6 +30,7 @@ function UpdateUser({ onClose, currentStudent, getStudent, section }) {
       await updateDoc(studentRef, {
         Name: updatedStudent.name,
         Studentno: updatedStudent.studentNo,
+        Course: updatedStudent.course,
         Section: updatedStudent.section,
         Email: updatedStudent.email,
         Password: updatedStudent.password
@@ -73,6 +75,19 @@ function UpdateUser({ onClose, currentStudent, getStudent, section }) {
           />
           <label htmlFor="studentNo">Student No:</label>
         </div>
+
+        <div className="group">
+          <input
+            placeholder=""
+            type="text"
+            name="course"
+            value={updatedStudent.course}
+            onChange={handleChange}
+            required
+          />
+          <label htmlFor="course">Course:</label>
+        </div>
+
         <div className="group">
           <input
             placeholder=""

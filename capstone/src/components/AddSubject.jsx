@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { collection, addDoc } from "firebase/firestore";
 import { db } from '../config/firestore';
+import './AddSubject.css'
 function AddSubject() {
     const [newSubject, setNewSubject] = useState({
         subjectname: ""
@@ -39,7 +40,9 @@ function AddSubject() {
   return (
     <div>
         <div className="group">
+        <label htmlFor="subject">Subject:</label>
           <input
+            className='subjectInput'
             placeholder=""
             type="text"
             name="subjectname"
@@ -47,9 +50,9 @@ function AddSubject() {
             onChange={handleChange}
             required
           />
-          <label htmlFor="subject">Subject:</label>
+          
         </div>
-        <button onClick={handleSubmit}>Add Subject</button>
+        <button className='addsubBTN' onClick={handleSubmit}>Add Subject</button>
     </div>
   )
 }

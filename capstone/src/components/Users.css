@@ -6,6 +6,13 @@
   margin: 0 auto;
 }
 
+.dropdowntwo{
+  display: flex;
+}
+.deletebtn{
+  background: #199bd3;
+}
+
 .table {  
   border-collapse: collapse;
   width: 100%;
@@ -20,6 +27,9 @@ th, td {
 
 thead {
   background-color: #f2f2f2;
+}
+tr {
+  border-bottom: 2px solid #107dac;
 }
 
 tr:hover {
@@ -38,7 +48,7 @@ th {
 }
 
 .addbtn {
-  background-color: royalblue;
+  background-color: #199bd3;
   border-radius: 3px;
   margin-top: 1rem;
   margin-bottom: 1rem;
@@ -65,7 +75,7 @@ th {
 }
 
 .button-div button {
-  background-color: royalblue;
+  background-color: #199bd3;
   border-radius: 3px;
   height: 2.3rem;
   display: flex;
@@ -81,7 +91,7 @@ th {
 .drop-add-con{
   display: flex;
   align-items: center;
-  gap: 53rem;
+  gap: 36rem;
 }
 
 /* DropdownContainer.css (or add this to your existing CSS) */
@@ -132,3 +142,38 @@ th {
 .dropdown-con select:hover {
   border-color: #4238ca;
 }
+
+/* Users.css */
+
+/* Style for file input container */
+.file-input-container {
+  margin-top: 10px;
+}
+
+
+/* Style for the file input label */
+.file-input-label {
+  display: inline-block;
+  padding: 8px 12px;
+  background-color: #199bd3; /* Button background color */
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.file-input-label:hover{
+  background-color: #0056b3;
+}
+/* Style for the file input */
+.file-input {
+  display: none; /* Hide the default file input */
+}
+
+/* Style for the file name display */
+.file-name {
+  margin-left: 10px;
+  font-style: italic;
+  color: #333;
+}
+

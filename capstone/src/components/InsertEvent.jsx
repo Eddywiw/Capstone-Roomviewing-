@@ -3,62 +3,81 @@ import './InsertEvent.css';
 import { collection, addDoc, getDocs, query, where } from 'firebase/firestore';
 import { db } from '../config/firestore';
 
-function InsertEvent({ onClose, onEventAdded }) {
-  const [selectedSection, setSelectedSection] = useState('bsit'); // Initialize with 'bsit' 
+function InsertEvent() {
+  const [selectedSection, setSelectedSection] = useState('bsit');
   const [newEvent, setNewEvent] = useState({
     title: '',
     roomNo: '',
-    date: '',
+    section: '',
+    startDate: '',
+    endDate: '',
     startTime: '',
     endTime: '',
     professor: '',
   });
+  const [days, setDays] = useState({
+    monday: false,
+    tuesday: false,
+    wednesday: false,
+    thursday: false,
+    friday: false,
+    saturday: false,
+  });
+
+  const handleDayChange = (day) => {
+    setDays((prevDays) => ({
+      ...prevDays,
+      [day]: !prevDays[day],
+    }));
+  };
 
   const [professors, setProfessors] = useState([]);
-
-  useEffect(() => {
-    // Fetch the professors from the Firestore collection and populate the dropdown.
-    const fetchProfessors = async () => {
-      const professorCollection = collection(db, 'teacher_subject');
-      const professorSnapshot = await getDocs(professorCollection);
-
-      const professorData = [];
-      professorSnapshot.forEach((doc) => {
-        const professor = doc.data();
-        professorData.push(professor);
-      });
-
-      setProfessors(professorData);
-    };
-
-    fetchProfessors();
-  }, []); // Empty dependency array to ensure this effect runs only once.
-
   const [rooms, setRooms] = useState([]);
+  const [sections, setSections] = useState([]);
+  const [dataLoaded, setDataLoaded] = useState(false);
 
   useEffect(() => {
-    // Fetch the rooms from the Firestore collection and populate the dropdown.
-    const fetchRooms = async () => {
-      const roomsCollection = collection(db, 'rooms');
-      const roomsSnapshot = await getDocs(roomsCollection);
+    const fetchData = async () => {
+      try {
+        const professorCollection = collection(db, 'teacher_subject');
+        const professorSnapshot = await getDocs(professorCollection);
+        const professorData = [];
+        professorSnapshot.forEach((doc) => {
+          const professor = doc.data();
+          professorData.push(professor);
+        });
+        setProfessors(professorData);
 
-      const roomData = [];
-      roomsSnapshot.forEach((doc) => {
-        const room = doc.data();
-        roomData.push(room);
-      });
+        const roomsCollection = collection(db, 'rooms');
+        const roomsSnapshot = await getDocs(roomsCollection);
+        const roomData = [];
+        roomsSnapshot.forEach((doc) => {
+          const room = doc.data();
+          roomData.push(room);
+        });
+        setRooms(roomData);
 
-      setRooms(roomData);
+        const sectionsCollection = collection(db, 'section');
+        const sectionsSnapshot = await getDocs(sectionsCollection);
+        const sectionData = [];
+        sectionsSnapshot.forEach((doc) => {
+          const section = doc.data();
+          sectionData.push(section);
+        });
+        setSections(sectionData);
+
+        setDataLoaded(true);
+      } catch (error) {
+        console.error('Error fetching data: ', error);
+      }
     };
 
-    fetchRooms();
-  }, []); // Empty dependency array to ensure this effect runs only once.
+    fetchData();
+  }, []);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
     if (name === 'title') {
-      // If the select input is for "title" (Professor & Subject),
-      // you can set the state with teacherName in Title and subjectName in Professor.
       const professor = professors.find((prof) => prof.teacherName === value);
       setNewEvent({
         ...newEvent,
@@ -66,76 +85,108 @@ function InsertEvent({ onClose, onEventAdded }) {
         professor: professor.subjectName,
       });
     } else if (name === 'roomNo') {
-      // If the select input is for "roomNo", update the state accordingly.
       setNewEvent({ ...newEvent, [name]: value });
     } else {
-      // For other inputs, update the state as usual.
       setNewEvent({ ...newEvent, [name]: value });
     }
   };
-  
-  
+
   const handleSubmit = async (event) => {
     event.preventDefault();
+  
     try {
-      const { roomNo, date, startTime, endTime } = newEvent;
+      const {
+        roomNo,
+        startDate,
+        endDate,
+        startTime,
+        endTime,
+        section,
+      } = newEvent;
   
-      // Check for schedule conflicts
       const existingSchedulesCollection = collection(db, 'schedules');
-      const existingSchedulesQuery = await getDocs(
-        query(
-          existingSchedulesCollection,
-          where('Roomno', '==', roomNo),
-          where('End', '>', new Date(`${date} ${startTime}`)),
-        )
-      );
+      const conflictingSchedules = [];
   
-      const conflictingSchedules = existingSchedulesQuery.docs
-        .map((doc) => doc.data())
-        .filter((schedule) => {
-          const scheduleStart = schedule.Start.toDate().getTime();
-          const scheduleEnd = schedule.End.toDate().getTime();
-          const checkStartTime = new Date(`${date} ${startTime}`).getTime();
-          const checkEndTime = new Date(`${date} ${endTime}`).getTime();
+      const startDateTime = new Date(`${startDate} ${startTime}`);
+      const endDateTime = new Date(`${endDate} ${endTime}`);
   
-          // Check for conflicts with the current schedule
-          return (
-            (checkStartTime >= scheduleStart && checkStartTime < scheduleEnd) ||
-            (checkEndTime > scheduleStart && checkEndTime <= scheduleEnd) ||
-            (checkStartTime <= scheduleStart && checkEndTime >= scheduleEnd)
+      let currentDate = new Date(startDateTime);
+  
+      while (currentDate <= endDateTime) {
+        // Check if the current day is selected
+        const dayOfWeek = currentDate
+          .toLocaleDateString('en-US', { weekday: 'short' })
+          .toLowerCase();
+  
+        if (days[dayOfWeek]) {
+          const existingSchedulesQuery = await getDocs(
+            query(
+              existingSchedulesCollection,
+              where('Roomno', '==', roomNo),
+              where('End', '>', currentDate)
+            )
           );
-        });
+  
+          conflictingSchedules.push(
+            ...existingSchedulesQuery.docs
+              .map((doc) => doc.data())
+              .filter((schedule) => {
+                const scheduleStart = schedule.Start.toDate().getTime();
+                const scheduleEnd = schedule.End.toDate().getTime();
+  
+                return (
+                  (startDateTime >= scheduleStart && startDateTime < scheduleEnd) ||
+                  (endDateTime > scheduleStart && endDateTime <= scheduleEnd) ||
+                  (startDateTime <= scheduleStart && endDateTime >= scheduleEnd)
+                );
+              })
+          );
+        }
+  
+        currentDate.setDate(currentDate.getDate() + 1); // Move to the next day
+      }
   
       if (conflictingSchedules.length > 0) {
-        // If there are existing schedules in the specified time range, display an alert
-        alert('Schedule conflict! Please choose a different time or room.');
+        alert(
+          'Schedule conflict! Please choose a different time or room.'
+        );
         return;
       }
   
-      // If no conflicts, proceed to add the new schedule
-      const docRef = await addDoc(collection(db, 'schedules'), {
-        Title: newEvent.title,
-        Roomno: roomNo,
-        Start: new Date(`${date} ${startTime}`),
-        End: new Date(`${date} ${endTime}`),
-        Professor: newEvent.professor,
-      });
+      // Add the event only on selected days
+      currentDate = new Date(startDateTime); // Reset currentDate to startDateTime
   
-      onEventAdded({
-        id: docRef.id,
-        Title: newEvent.title,
-        Roomno: roomNo,
-        Start: new Date(`${date} ${startTime}`),
-        End: new Date(`${date} ${endTime}`),
-        Professor: newEvent.professor,
-      });
+      for (const day in days) {
+        if (days[day]) {
+          await addDoc(
+            collection(db, 'schedules'),
+            {
+              Title: newEvent.title,
+              Roomno: roomNo,
+              Section: section,
+              Start: new Date(
+                `${currentDate.toISOString().split('T')[0]} ${startTime}`
+              ),
+              End: new Date(
+                `${currentDate.toISOString().split('T')[0]} ${endTime}`
+              ),
+              Professor: newEvent.professor,
+              Day: day,
+            }
+          );
+        }
   
-      onClose();
+        currentDate.setDate(currentDate.getDate() + 1); // Move to the next day
+      }
+  
+      window.alert('Room successfully added!');
   
       setNewEvent({
         title: '',
         roomNo: '',
-        date: '',
+        section: '',
+        startDate: '',
+        endDate: '',
         startTime: '',
         endTime: '',
         professor: '',
@@ -145,18 +196,33 @@ function InsertEvent({ onClose, onEventAdded }) {
     }
   };
   
-  
+  // Function to format date and time for display
+  const formatDateTime = (date, time) => {
+    const dateTimeString = `${date} ${time}`;
+    const dateObject = new Date(dateTimeString);
+    const formattedDateTime = dateObject.toLocaleString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+      hour12: true,
+      timeZone: 'Asia/Manila', // Adjust the timezone as needed
+    });
+
+    return formattedDateTime;
+  };
+
+  if (!dataLoaded) {
+    return <div>Loading...</div>; // or any other loading indicator
+  }
+
   return (
     <div>
       <form className="formcon" onSubmit={handleSubmit}>
-      <div className="group">
+        <div className="group">
           <label htmlFor="professor">Professor & Subject:</label>
-          <select
-            name="title"
-            value={newEvent.title}
-            onChange={handleChange}
-            required
-          >
+          <select name="title" value={newEvent.title} onChange={handleChange} required>
             <option value="">Select a Professor</option>
             {professors.map((professor) => (
               <option key={professor.Email} value={professor.teacherName}>
@@ -168,12 +234,7 @@ function InsertEvent({ onClose, onEventAdded }) {
 
         <div className="group">
           <label htmlFor="roomNo">Room Number:</label>
-          <select
-            name="roomNo"
-            value={newEvent.roomNo}
-            onChange={handleChange}
-            required
-          >
+          <select name="roomNo" value={newEvent.roomNo} onChange={handleChange} required>
             <option value="">Select a Room</option>
             {rooms.map((room) => (
               <option key={room.Roomno} value={room.Roomno}>
@@ -182,17 +243,53 @@ function InsertEvent({ onClose, onEventAdded }) {
             ))}
           </select>
         </div>
-       
+
         <div className="group">
+          <label htmlFor="section">Section:</label>
+          <select name="section" value={newEvent.section} onChange={handleChange} required>
+            <option value="">Select Section</option>
+            <option value="BSIT-11-A">BSIT 11-A</option>
+            <option value="BSIT-21-A">BSIT 21-A</option>
+            <option value="BSIT-31-A">BSIT 31-A</option>
+            <option value="BSIT-41-A">BSIT 41-A</option>
+            <option value="BSBA-11-A">BSBA 11-A</option>
+            <option value="BSBA-21-A">BSBA 21-A</option>
+            <option value="BSBA-31-A">BSBA 31-A</option>
+            <option value="BSBA-41-A">BSBA 41-A</option>
+            <option value="HRS-11-A">HRS 11-A</option>
+            <option value="HRS-21-A">HRS 21-A</option>
+            <option value="GAS-11">GAS 11</option>
+            <option value="GAS-12">GAS 12</option>
+            <option value="MAWD-11">MAWD 11</option>
+            <option value="MAWD-12">MAWD 12</option>
+            <option value="CULART-11">CULART 11</option>
+            <option value="CULART-12">CULART 12</option>
+            <option value="ABM-11">ABM 11</option>
+            <option value="ABM-12">ABM 12</option>
+          </select>
+        </div>
+
+        <div className="group">
+          <label htmlFor="startDate">Start Date:</label>
           <input
             placeholder=""
             type="date"
-            name="date"
-            value={newEvent.date}
+            name="startDate"
+            value={newEvent.startDate}
             onChange={handleChange}
             required
           />
-          <label htmlFor="date">Date:</label>
+        </div>
+        <div className="group">
+          <label htmlFor="endDate">End Date:</label>
+          <input
+            placeholder=""
+            type="date"
+            name="endDate"
+            value={newEvent.endDate}
+            onChange={handleChange}
+            required
+          />
         </div>
         <div className="timecon">
           <div className="group">
@@ -220,9 +317,81 @@ function InsertEvent({ onClose, onEventAdded }) {
             />
           </div>
         </div>
-       
+
+        {/* Display formatted start and end times */}
+        <div className="group">
+          <label htmlFor="formattedStartTime">Formatted Start Time:</label>
+          <span>{formatDateTime(newEvent.startDate, newEvent.startTime)}</span>
+        </div>
+        <div className="group">
+          <label htmlFor="formattedEndTime">Formatted End Time:</label>
+          <span>{formatDateTime(newEvent.endDate, newEvent.endTime)}</span>
+        </div>
+
+        <div className="groupko">
+          <label htmlFor="repeatDays">Repeats on:</label>
+          <div className="checkbox-group">
+            <label>
+              <input
+                type="checkbox"
+                name="monday"
+                checked={days.monday}
+                onChange={() => handleDayChange('monday')}
+              />
+              <span className="custom-checkbox">M</span>
+            </label>
+            <label>
+              <input
+                type="checkbox"
+                name="tuesday"
+                checked={days.tuesday}
+                onChange={() => handleDayChange('tuesday')}
+              />
+              <span className="custom-checkbox">T</span>
+            </label>
+            <label>
+              <input
+                type="checkbox"
+                name="wednesday"
+                checked={days.wednesday}
+                onChange={() => handleDayChange('wednesday')}
+              />
+              <span className="custom-checkbox">W</span>
+            </label>
+            <label>
+              <input
+                type="checkbox"
+                name="thursday"
+                checked={days.thursday}
+                onChange={() => handleDayChange('thursday')}
+              />
+              <span className="custom-checkbox">Th</span>
+            </label>
+            <label>
+              <input
+                type="checkbox"
+                name="friday"
+                checked={days.friday}
+                onChange={() => handleDayChange('friday')}
+              />
+              <span className="custom-checkbox">F</span>
+            </label>
+            <label>
+              <input
+                type="checkbox"
+                name="saturday"
+                checked={days.saturday}
+                onChange={() => handleDayChange('saturday')}
+              />
+              <span className="custom-checkbox">Sa</span>
+            </label>
+          </div>
+        </div>
+
         <div>
-          <button type="submit">Add Event</button>
+          <button type="submit" className="submitbtn">
+            Add Event
+          </button>
         </div>
       </form>
     </div>

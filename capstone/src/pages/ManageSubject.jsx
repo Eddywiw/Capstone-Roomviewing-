@@ -12,20 +12,20 @@ function ManageSubject() {
     setSelectedTabIndex(index);
   };
   return (
-    <div>
+    <div className='mngdiv'>
       <div className='tab-con'>
         <Tabs selectedIndex={selectedTabIndex} onSelect={handleTabSelect}>
-          <TabList>
-            <Tab >Add Subject</Tab>
-            <Tab >Assign Professor/Teacher</Tab>
+          <TabList className="tab-list-con">
+            <Tab className="tabsko">Add Subject</Tab>
+            <Tab className="tabsko">Assign Professor/Teacher</Tab>
           </TabList>
-          <TabPanel className="tab-panel-ko">
+          <TabPanel className="tab-panel-con">
             <div className='addsub-conko'>
                 <AddSubject/>
                 <SubjectList/>
             </div>
           </TabPanel>
-          <TabPanel className="tab-panel-ko">
+          <TabPanel className="tab-panel-con">
             <div className='addsub-conko'>
               <AssignProf/>
               <ProfessorSubjectTable/>

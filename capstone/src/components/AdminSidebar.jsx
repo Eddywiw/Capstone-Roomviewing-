@@ -32,9 +32,24 @@ export const AdminSidebarData = [
   {
     title: "Manage Schedule",
     path: "/mngSchedule",
-    icon: <IoIcons.IoMdPeople />,
+    icon: <FaIcons.FaList />,
     cName: "nav-text",
   },
+
+  {
+  title: "Notification",
+  path: "/AdminNotification",
+  icon: <IoIcons.IoMdNotifications />,
+  cName: "nav-text",
+  },
+
+  {
+    title: "Archive",
+    path: "/archive",
+    icon: <FaIcons.FaArchive />,
+    cName: "nav-text",
+    },
+
   {
     title: "Logout",
     path: "/",

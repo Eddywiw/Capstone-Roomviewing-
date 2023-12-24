@@ -8,6 +8,7 @@ import Successnotif from '../components/Successnotif';
 import "react-multi-carousel/lib/styles.css";
 import RoomSched from '../components/RoomSched';
 import { db } from '../config/firestore';
+import NotificationUser from '../components/NotificationUser';
 import {
   getAuth,
   onAuthStateChanged,
@@ -47,6 +48,8 @@ const Home = () => {
   const hideForm = () => {
     setIsFormVisible(false);
   };
+
+
 
  
 
@@ -162,8 +165,33 @@ onAuthStateChanged(auth, async (user) => {
     }
   };
 
- 
   const [currentSchedule, setCurrentSchedule] = useState(null);
+  useEffect(() => {
+    const fetchCurrentSchedule = async () => {
+      const user = auth.currentUser;
+  
+      if (user) {
+        const scheduleQuery = query(
+          collection(db, 'schedules'),
+          where('Title', '==', userName), // Assuming userName contains the user's username
+          orderBy('Start', 'asc'),
+          limit(1)
+        );
+  
+        const scheduleSnapshot = await getDocs(scheduleQuery);
+  
+        if (!scheduleSnapshot.empty) {
+          const scheduleData = scheduleSnapshot.docs[0].data();
+          setCurrentSchedule(scheduleData);
+        } else {
+          setCurrentSchedule(null);
+        }
+      }
+    };
+  
+    fetchCurrentSchedule();
+  }, [auth.currentUser, userName]);
+  
 
   useEffect(() => {
     const fetchData = async () => {
@@ -179,9 +207,13 @@ onAuthStateChanged(auth, async (user) => {
         const schedulesSnapshot = await getDocs(schedulesQuery);
         const schedulesData = schedulesSnapshot.docs.map(doc => doc.data());
   
+        // Extract section information from schedules
+        const sectionInfo = schedulesData.map(schedule => schedule.Section);
+        
         return {
           ...room,
           schedules: schedulesData,
+          section: sectionInfo.length > 0 ? sectionInfo.join(', ') : 'N/A', // Display 'N/A' if no sections found
         };
       });
   
@@ -191,6 +223,7 @@ onAuthStateChanged(auth, async (user) => {
   
     fetchData();
   }, []);
+  
   
 
 
@@ -290,6 +323,7 @@ onAuthStateChanged(auth, async (user) => {
           <p className="card-body">
            Floor: {entry.Floor}
           </p>
+          <p className='card-body'>Section: {entry.section}</p>
           <p className='card-capacity'>Capacity: {entry.Capacity}</p>
           <p className='card-status'>
             Status: {isRoomAvailable(entry.schedules) ? 'Available' : 'Not Available'}

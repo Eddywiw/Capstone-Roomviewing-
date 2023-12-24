@@ -21,6 +21,7 @@
   display: flex;
   border: none;
   border-bottom: none;
+  
 }
 
 .tabs {
@@ -32,11 +33,12 @@
   cursor: pointer;
   text-align: center;
   transition: background-color 0.3s;
-  width: 100%;
+  width: 700px;
   max-width: 800px;
   border-top-right-radius: 10px;
   border-top-left-radius: 10px;
   gap: 1rem;
+  
 }
 
 .tabs:hover {
@@ -48,6 +50,7 @@
   border: none;
   border-top: none; /* Remove top border for the tab content */
   border-bottom: none;
+  
 
 }
 

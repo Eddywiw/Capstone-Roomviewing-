@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { collection, getDocs, addDoc, doc, getDoc } from 'firebase/firestore';
 import { db } from '../config/firestore';
-
+import './AssignProf.css'
 function AssignProf() {
   const [professors, setProfessors] = useState([]);
   const [selectedProfessor, setSelectedProfessor] = useState('');
@@ -83,9 +83,8 @@ function AssignProf() {
   };
 
   return (
-    <div>
-      <h1>Assign Professor</h1>
-      <label htmlFor="professorSelect">Select a Professor:</label>
+    <div className="assign-prof-container">
+      <label htmlFor="professorSelect" className="form-label">Select a Professor:</label>
       <select
         id="professorSelect"
         value={selectedProfessor}
@@ -99,7 +98,7 @@ function AssignProf() {
         ))}
       </select>
 
-      <label htmlFor="subjectSelect">Select a Subject:</label>
+      <label htmlFor="subjectSelect" className="form-label">Select a Subject:</label>
       <select
         id="subjectSelect"
         value={selectedSubject}
@@ -113,7 +112,7 @@ function AssignProf() {
         ))}
       </select>
 
-      <button onClick={handleAssign}>Assign Professor to Subject</button>
+      <button onClick={handleAssign} className="assign-button">Assign Professor to Subject</button>
     </div>
   );
 }

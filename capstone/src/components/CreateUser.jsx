@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './CreateUser.css';
 import { collection, addDoc, getDocs } from "firebase/firestore";
 import { db } from '../config/firestore';
@@ -8,11 +8,31 @@ function CreateUser({ onClose, onStudentAdded, section}) {
     enrollmentStatus: "",
     name: "",
     studentNo: "",
+    course: "",
     section: "",
     email: "",
     password: "",
     
   });
+  const [sections, setSections] = useState([]);
+
+  useEffect(() => {
+    // Fetch the sections from the Firestore collection and populate the dropdown.
+    const fetchSections = async () => {
+      const sectionsCollection = collection(db, 'section');
+      const sectionsSnapshot = await getDocs(sectionsCollection);
+
+      const sectionData = [];
+      sectionsSnapshot.forEach((doc) => {
+        const section = doc.data();
+        sectionData.push(section);
+      });
+
+      setSections(sectionData);
+    };
+
+    fetchSections();
+  }, []); // Empty dependency array to ensure this effect runs only once.
     
 
   const handleChange = (event) => {
@@ -49,6 +69,7 @@ function CreateUser({ onClose, onStudentAdded, section}) {
         EnrollmentStatus: newStudent.enrollmentStatus,
         Name: newStudent.name,
         Studentno: newStudent.studentNo,
+        Course: newStudent.course,
         Section: newStudent.section,
         Email: newStudent.email,
         Password: newStudent.password,
@@ -59,6 +80,7 @@ function CreateUser({ onClose, onStudentAdded, section}) {
         EnrollmentStatus: newStudent.enrollmentStatus,
         Name: newStudent.name,
         Studentno: newStudent.studentNo,
+        Course: newStudent.course,
         Section: newStudent.section,
         Email: newStudent.email,
         Password: newStudent.password,
@@ -74,6 +96,7 @@ function CreateUser({ onClose, onStudentAdded, section}) {
         enrollmentStatus: '',
         name: '',
         studentNo: '',
+        course: "",
         section: '',
         email: '',
         password: '',
@@ -125,6 +148,26 @@ function CreateUser({ onClose, onStudentAdded, section}) {
           />
           <label htmlFor="studentno">Student No:</label>
         </div>
+
+        <div className="group">
+          <label htmlFor="course">Course:</label>
+          <select
+            name="course"
+            value={newStudent.course}
+            onChange={handleChange}
+            required
+          >
+            <option value="">Select Course/Strand</option>
+            <option value="BSIT">BSIT</option>
+            <option value="BSBA">BSBA</option>
+            <option value="HRS">HRS</option>
+            <option value="GAS">GAS</option>
+            <option value="MAWD">MAWD</option>
+            <option value="CULART">CULART</option>
+            <option value="ABM">ABM</option>
+          </select>
+        </div>
+
         <div className="group">
           <label htmlFor="section">Section:</label>
           <select
@@ -134,10 +177,29 @@ function CreateUser({ onClose, onStudentAdded, section}) {
             required
           >
             <option value="">Select Section</option>
-            <option value="BSIT 41-A">BSIT 41-A</option>
-            <option value="BSIT 41-B">BSIT 41-B</option>
+            <option value="BSIT-11-A">BSIT 11-A</option>
+            <option value="BSIT-21-A">BSIT 21-A</option>
+            <option value="BSIT-31-A">BSIT 31-A</option>
+            <option value="BSIT-41-A">BSIT 41-A</option>
+            <option value="BSBA-11-A">BSBA 11-A</option>
+            <option value="BSBA-21-A">BSBA 21-A</option>
+            <option value="BSBA-31-A">BSBA 31-A</option>
+            <option value="BSBA-41-A">BSBA 41-A</option>
+            <option value="HRS-11-A">HRS 11-A</option>
+            <option value="HRS-21-A">HRS 21-A</option>
+            <option value="GAS-11">GAS 11</option>
+            <option value="GAS-12">GAS 12</option>
+            <option value="MAWD-11">MAWD 11</option>
+            <option value="MAWD-12">MAWD 12</option>
+            <option value="CULART-11">CULART 11</option>
+            <option value="CULART-12">CULART 12</option>
+            <option value="ABM-11">ABM 11</option>
+            <option value="ABM-12">ABM 12</option>
           </select>
+
         </div>
+
+
         
         <div className="group">
           <input

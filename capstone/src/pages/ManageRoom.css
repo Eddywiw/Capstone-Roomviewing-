@@ -1,7 +1,9 @@
 .bg-room-con{
   background: #d2e1e6;
   display: flex;
-  height: 100vh;
+  height: 150vh;
+  
+
 }
 
 .room-container {
@@ -21,12 +23,12 @@
     gap: 2rem;
   }
   .cardDeletekBTN{
-    background: rgb(228, 43, 43);
+    background: #199bd3;
     height: 2rem;
     border-radius: 3px;
   }
   .cardEditBTN{
-    background: rgb(49, 49, 228);
+    background: #199bd3;
     height: 2rem;
     border-radius: 3px;
   }
@@ -39,7 +41,7 @@
     height: 3rem;
     border-radius: 5px;
     justify-content: center;
-    background: royalblue;
+    background: #199bd3;
   }
  .card-time-con{
   display: flex;

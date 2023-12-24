@@ -15,12 +15,20 @@
     margin-bottom: 5px;
     font-weight: bold;
   }
+
+  .submitbtn{
+    background: #199bd3;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    border-radius: 5px;
+  }
   
 
   
   button {
     padding: 10px 20px;
-    background-color: #007bff;
+    background-color: #199bd3;
     color: white;
     border: none;
     border-radius: 5px;
@@ -62,7 +70,35 @@
   .group {
     position: relative;
   }
-  
+  /* Style for select dropdown */
+.group select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  appearance: none; /* Remove default arrow icon in some browsers */
+  background-color: #fff; /* Dropdown background color */
+  cursor: pointer;
+}
+
+/* Style for options in the dropdown */
+.group select option {
+  background-color: #fff;
+  color: #333;
+}
+
+/* Style for the focused state of the dropdown */
+.group select:focus {
+  border-color: royalblue;
+  outline: none;
+}
+
+/* Style for the label above the dropdown */
+.group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
   .formcon .group label {
     font-size: 14px;
     color: rgb(99, 102, 102);
@@ -111,3 +147,43 @@
     display: flex;
     gap: 1rem;
   }
+
+  .checkbox-group {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    margin-top: 10px;
+  }
+  
+  .checkbox-group label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+  }
+  
+  .checkbox-group input {
+    opacity: 0;
+    position: absolute;
+  }
+  
+  .checkbox-group .custom-checkbox {
+    width: 24px;
+    height: 24px;
+    border: 1px solid rgb(99, 102, 102);
+    border-radius: 50%;
+    margin-right: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 14px;
+    color: rgb(99, 102, 102);
+  }
+  
+  .checkbox-group input:checked + .custom-checkbox {
+    background-color: rgb(99, 102, 102);
+    color: #ffffff;
+  }
+  
+
+  

@@ -44,6 +44,15 @@
     overflow-y: auto; /* Add a vertical scroll bar when content exceeds the max height */
     padding: 20px;
   }
+
+  .viewalltext{
+    text-decoration: underline;
+  }
+
+  .viewallcon{
+    padding: 15px;
+    cursor: pointer;
+  }
   
   /* Animation to slide in the notification form */
   @keyframes slideIn {

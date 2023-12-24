@@ -1,12 +1,7 @@
 // NotificationContext.js
-
-import { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 
 const NotificationContext = createContext();
-
-export const useNotificationContext = () => {
-  return useContext(NotificationContext);
-};
 
 export const NotificationProvider = ({ children }) => {
   const [requestAccepted, setRequestAccepted] = useState(false);
@@ -17,4 +12,7 @@ export const NotificationProvider = ({ children }) => {
     </NotificationContext.Provider>
   );
 };
-  
+
+export const useNotificationContext = () => {
+  return useContext(NotificationContext);
+};

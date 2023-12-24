@@ -4,6 +4,7 @@ import './AdminHome.css';
 import * as IoIcons from "react-icons/io";
 import { db } from '../config/firestore';
 import {
+  QuerySnapshot,
   collection,
   onSnapshot,
 } from 'firebase/firestore';
@@ -13,12 +14,17 @@ function AdminHome() {
   const [totalStudentsBSIT, setTotalStudentsBSIT] = useState(0);
   const [totalStudentsBSBA, setTotalStudentsBSBA] = useState(0);
   const [totalStudentsHRS, setTotalStudentsHRS] = useState(0);
+  const [totalprof, setTotalprof] = useState(0);
   useEffect(() => {
     // Create references to the "bsit" and "bsba" collections
     const bsitCollection = collection(db, 'bsit');
     const bsbaCollection = collection(db, 'bsba');
     const hrsCollection = collection(db, 'hrs');
+    const profCollection = collection(db, 'professor')
     // Listen for changes in the "bsit" collection
+    const unsubscribeProf = onSnapshot(profCollection, (querySnapshot) =>{
+      setTotalprof(querySnapshot.size);
+    })
     const unsubscribeBSIT = onSnapshot(bsitCollection, (querySnapshot) => {
       setTotalStudentsBSIT(querySnapshot.size);
     });
@@ -34,6 +40,7 @@ function AdminHome() {
 
     // Cleanup the listeners when the component unmounts
     return () => {
+      unsubscribeProf();
       unsubscribeBSIT();
       unsubscribeBSBA();
       unsubscribeHRS();
@@ -42,30 +49,8 @@ function AdminHome() {
 
   const totalStudents = totalStudentsBSIT + totalStudentsBSBA + totalStudentsHRS;
 
-  // Create a ref for the chart canvas
-  const chartRef = useRef();
-  const chartInstance = useRef(null);
 
-  useEffect(() => {
-    // Ensure the previous chart instance is destroyed before creating a new one
-    if (chartInstance.current) {
-      chartInstance.current.destroy();
-    }
-
-    // Create a pie chart
-    chartInstance.current = new Chart(chartRef.current, {
-      type: 'pie',
-      data: {
-        labels: ['BSIT', 'BSBA'],
-        datasets: [
-          {
-            data: [totalStudentsBSIT, totalStudentsBSBA],
-            backgroundColor: ['rgb(75, 192, 192)', 'rgb(255, 99, 132)'],
-          },
-        ],
-      },
-    });
-  }, [totalStudentsBSIT, totalStudentsBSBA]);
+ 
 
   return (
     <div className='mainadhome-con'>
@@ -99,8 +84,7 @@ function AdminHome() {
           </div>
           <div className='totalprof'>
             <div className='totalprof_lbl'>
-              <p>0</p>
-              <p>Total Professors</p>
+              <p>Total Professors: {totalprof}</p>
             </div>
             <div className='icon-totalprof'>
             <IoIcons.IoMdPeople className="icon-people" />
