@@ -40,15 +40,33 @@ function CreateUser({ onClose, onStudentAdded, section}) {
     setNewStudent({ ...newStudent, [name]: value });
   };
 
+  const [existingStudents, setExistingStudents] = useState([]); 
+  useEffect(() => {
+    // Fetch existing students on component mount
+    getExistingStudents();
+  }, []);
+
+  const getExistingStudents = async () => {
+    try {
+      const querySnapshot = await getDocs(collection(db, section));
+      const existingStudentsData = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      setExistingStudents(existingStudentsData);
+    } catch (error) {
+      console.error("Error fetching existing students: ", error);
+    }
+  };
+
+
   async function handleSubmit(event) {
     event.preventDefault();
   
-    // Check if the student with the same student number already exists
-    const existingStudentQuery = collection(db, section);
-    const existingStudentSnapshot = await getDocs(existingStudentQuery);
-    const existingStudents = existingStudentSnapshot.docs.map((doc) => doc.data());
+    const existingStudent = existingStudents.find((student) => {
+      const existingStudentNo = String(student.Studentno).toLowerCase();
+      const newStudentNo = String(newStudent.studentNo).toLowerCase();
+      return existingStudentNo === newStudentNo;
+    });
   
-    if (existingStudents.some((student) => student.Studentno === newStudent.studentNo)) {
+    if (existingStudent) {
       alert('A user with the same student number already exists. Please use a different student number.');
       return;
     }
@@ -101,11 +119,15 @@ function CreateUser({ onClose, onStudentAdded, section}) {
         email: '',
         password: '',
       });
+  
+      // Refresh the existingStudents array after successful addition
+      getExistingStudents();
     } catch (error) {
       console.error('Error adding document: ', error);
     }
   }
-
+  
+  
   return (
     <div className='usemain'>
       <button className="exit-btn" onClick={onClose}>
@@ -177,24 +199,24 @@ function CreateUser({ onClose, onStudentAdded, section}) {
             required
           >
             <option value="">Select Section</option>
-            <option value="BSIT-11-A">BSIT 11-A</option>
-            <option value="BSIT-21-A">BSIT 21-A</option>
-            <option value="BSIT-31-A">BSIT 31-A</option>
-            <option value="BSIT-41-A">BSIT 41-A</option>
-            <option value="BSBA-11-A">BSBA 11-A</option>
-            <option value="BSBA-21-A">BSBA 21-A</option>
-            <option value="BSBA-31-A">BSBA 31-A</option>
-            <option value="BSBA-41-A">BSBA 41-A</option>
-            <option value="HRS-11-A">HRS 11-A</option>
-            <option value="HRS-21-A">HRS 21-A</option>
-            <option value="GAS-11">GAS 11</option>
-            <option value="GAS-12">GAS 12</option>
-            <option value="MAWD-11">MAWD 11</option>
-            <option value="MAWD-12">MAWD 12</option>
-            <option value="CULART-11">CULART 11</option>
-            <option value="CULART-12">CULART 12</option>
-            <option value="ABM-11">ABM 11</option>
-            <option value="ABM-12">ABM 12</option>
+            <option value="BSIT 11-A">BSIT 11-A</option>
+            <option value="BSIT 21-A">BSIT 21-A</option>
+            <option value="BSIT 31-A">BSIT 31-A</option>
+            <option value="BSIT 41-A">BSIT 41-A</option>
+            <option value="BSBA 11-A">BSBA 11-A</option>
+            <option value="BSBA 21-A">BSBA 21-A</option>
+            <option value="BSBA 31-A">BSBA 31-A</option>
+            <option value="BSBA 41-A">BSBA 41-A</option>
+            <option value="HRS 11-A">HRS 11-A</option>
+            <option value="HRS 21-A">HRS 21-A</option>
+            <option value="GAS 11">GAS 11</option>
+            <option value="GAS 12">GAS 12</option>
+            <option value="MAWD 11">MAWD 11</option>
+            <option value="MAWD 12">MAWD 12</option>
+            <option value="CULART 11">CULART 11</option>
+            <option value="CULART 12">CULART 12</option>
+            <option value="ABM 11">ABM 11</option>
+            <option value="ABM 12">ABM 12</option>
           </select>
 
         </div>

@@ -24,7 +24,7 @@
   
   /* Style for the selected tab */
   .react-tabs__tab--selected {
-    background-color: #fff;
+    background-color: #0056b3;
     border-color: #ddd;
     border-bottom: 1px solid #fff;
   }

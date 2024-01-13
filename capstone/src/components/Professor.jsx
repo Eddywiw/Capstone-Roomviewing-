@@ -7,6 +7,8 @@ import './Users.css'
 import {db} from '../config/firestore'
 import CreateProfessor from './CreateProfessor';
 import UpdateProfessor from './UpdateProfessor';
+import { Table, Button, Modal, Dropdown } from 'react-bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
 function Professor() {
   const [currentProf, setCurrentProf] = useState(null);
   const [profs, setProfs] = useState([]);
@@ -78,14 +80,14 @@ function Professor() {
           <button className='addbtn' onClick={handleAddBtnClick}>Add +</button>
         </div>  
        
-        <table className='table'>
+        <Table striped bordered hover>
           <thead>
             <tr>
               <th>Name</th>
               <th>Position</th>
               <th>Email</th>
               <th>Password</th> 
-              <th>Action</th>
+             
             </tr>
           </thead>
           <tbody>
@@ -97,17 +99,25 @@ function Professor() {
                 <td>{user.Email}</td>
                 <td>{user.Password}</td>
                 <td>
-                  <div className='button-div'>
-                  <button className='editbtn'onClick={() => handleUpdateBtnClick(user)}>Edit</button>
-                  <button className='deletebtn' onClick={() => handleDeleteBtnClick(user.id)}>Delete</button>
+                  <div className='d-flex justify-content-center'>
+                    <Dropdown>
+                      <Dropdown.Toggle variant="secondary" id={`dropdown-${user.id}`}>                      
+                      </Dropdown.Toggle>
+                      <Dropdown.Menu>
+                        <Dropdown.Item onClick={() => handleDeleteBtnClick(user.id)}>Remove</Dropdown.Item>
+                        <Dropdown.Item onClick={() => handleUpdateBtnClick(user)}>Edit</Dropdown.Item>
+                        {/* Add additional menu items as needed */}
+                      </Dropdown.Menu>
+                    </Dropdown>
                   </div>
                 </td>
+
                 
               </tr>
             ))
             }
           </tbody>
-        </table>
+        </Table>
       </div>
       {showModal && <CreateProfessor onClose={handleCloseModals} onStudentAdded={handleStudentAdded} getProfessor={getProfessor}/>}
       

@@ -2,53 +2,108 @@ import React from "react";
 import * as FaIcons from "react-icons/fa";
 import * as AiIcons from "react-icons/ai";
 import * as IoIcons from "react-icons/io";
-
+import * as RiIcons from 'react-icons/ri'
+import * as LiaIcons from 'react-icons/lia'
 export const AdminSidebarData = [
 
   {
     title: "Home",
     path: "/adminhome",
     icon: <AiIcons.AiFillHome />,
-    cName: "nav-text",
+    iconClosed: <RiIcons.RiArrowDownSFill />,
+    iconOpened: <RiIcons.RiArrowUpSFill />,
   },
   {
     title: "Manage Room",
     path: "/manageroom",
     icon: <IoIcons.IoMdList/>,
-    cName: "nav-text",
+    iconClosed: <RiIcons.RiArrowDownSFill />,
+    iconOpened: <RiIcons.RiArrowUpSFill />,
   },
   {
     title: "Manage Subject",
     path: "/managesubject",
     icon: <FaIcons.FaList />,
-    cName: "nav-text",
+    iconClosed: <RiIcons.RiArrowDownSFill />,
+    iconOpened: <RiIcons.RiArrowUpSFill />,
   },
   {
     title: "Manage Accounts",
     path: "/admin",
     icon: <IoIcons.IoMdPeople />,
-    cName: "nav-text",
+    iconClosed: <RiIcons.RiArrowDownSFill />,
+    iconOpened: <RiIcons.RiArrowUpSFill />,
   },
   {
     title: "Manage Schedule",
     path: "/mngSchedule",
     icon: <FaIcons.FaList />,
-    cName: "nav-text",
+    iconClosed: <RiIcons.RiArrowDownSFill />,
+    iconOpened: <RiIcons.RiArrowUpSFill />,
   },
 
   {
   title: "Notification",
-  path: "/AdminNotification",
   icon: <IoIcons.IoMdNotifications />,
-  cName: "nav-text",
+  iconClosed: <RiIcons.RiArrowDownSFill />,
+  iconOpened: <RiIcons.RiArrowUpSFill />,
+
+  subNav: [
+    {
+      title: 'Pending',
+      path: '/pendingnotif',
+      icon: <IoIcons.IoIosPaper />
+    },
+    {
+      title: 'Accepted',
+      path: '/archives/revenue',
+      icon: <IoIcons.IoIosPaper />
+    },
+    {
+      title: 'Declined',
+      path: '/archives/revenue',
+      icon: <IoIcons.IoIosPaper />
+    }
+  ]
   },
 
-  {
-    title: "Archive",
-    path: "/archive",
-    icon: <FaIcons.FaArchive />,
-    cName: "nav-text",
-    },
+  // Updated AdminSidebarData
+{
+    title: 'Archives',
+
+    icon: <LiaIcons.LiaArchiveSolid />,
+    iconClosed: <RiIcons.RiArrowDownSFill />,
+    iconOpened: <RiIcons.RiArrowUpSFill />,
+
+    subNav: [
+      {
+        title: 'Notification Archives',
+        path: '/notificationarchives',
+        icon: <IoIcons.IoIosPaper />
+      },
+      {
+        title: 'Subject Archives',
+        path: '/subjectarchives',
+        icon: <IoIcons.IoIosPaper />
+      },
+      {
+        title: 'Schedules Archives',
+        path: '/archives/revenue',
+        icon: <IoIcons.IoIosPaper />
+      },
+      {
+        title: 'Account Archives',
+        path: '/archives/revenue',
+        icon: <IoIcons.IoIosPaper />
+      },
+      {
+        title: 'Room Archives',
+        path: '/archives/revenue',
+        icon: <IoIcons.IoIosPaper />
+      }
+    ]
+  },
+
 
   {
     title: "Logout",

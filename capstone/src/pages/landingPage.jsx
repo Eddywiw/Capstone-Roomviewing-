@@ -5,7 +5,7 @@ import './landingPage.css';
 import { Link, useNavigate } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
-
+      
 function LandingPage() {
   const [text, setText] = useState('');
   const [texts, setTexts] = useState('');

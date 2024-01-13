@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { collection, getDocs, addDoc, doc, getDoc } from 'firebase/firestore';
 import { db } from '../config/firestore';
-import './AssignProf.css'
+import { Form, Button, Row, Col } from 'react-bootstrap';
+import './AssignProf.css';
+
 function AssignProf() {
   const [professors, setProfessors] = useState([]);
   const [selectedProfessor, setSelectedProfessor] = useState('');
   const [selectedSubject, setSelectedSubject] = useState('');
-  const [subjectList, setSubjectList] = useState([]); // Add subject list state
-  
-  // Use the useEffect hook to fetch professors and subjects from Firestore when the component mounts
+  const [subjectList, setSubjectList] = useState([]);
+
   useEffect(() => {
     const fetchProfessors = async () => {
       try {
@@ -30,12 +31,12 @@ function AssignProf() {
         querySnapshot.forEach((doc) => {
           subjectList.push({ id: doc.id, ...doc.data() });
         });
-        setSubjectList(subjectList); // Set subject list state
+        setSubjectList(subjectList);
       } catch (error) {
         console.error('Error fetching subjects: ', error);
       }
     };
-    
+
     fetchProfessors();
     fetchSubjects();
   }, []);
@@ -51,68 +52,76 @@ function AssignProf() {
   const handleAssign = async () => {
     if (selectedProfessor && selectedSubject) {
       try {
-        // Fetch the name of the selected professor
         const professorRef = doc(db, 'professor', selectedProfessor);
         const professorSnap = await getDoc(professorRef);
         const professorName = professorSnap.data().Name;
-        
-        // Fetch the name of the selected subject
+
         const subjectRef = doc(db, 'subject', selectedSubject);
         const subjectSnap = await getDoc(subjectRef);
         const subjectName = subjectSnap.data().Subjectname;
 
-        // Create a new document in the "teacher_subject" collection with IDs and names
-        await addDoc(collection(db, "teacher_subject"), {
+        await addDoc(collection(db, 'teacher_subject'), {
           teacherId: selectedProfessor,
           teacherName: professorName,
           subjectId: selectedSubject,
           subjectName: subjectName,
         });
 
-        // Reset the selected values after assignment
         setSelectedProfessor('');
         setSelectedSubject('');
 
-        console.log("Teacher assigned to subject.");
+        console.log('Teacher assigned to subject.');
       } catch (error) {
-        console.error("Error assigning teacher: ", error);
+        console.error('Error assigning teacher: ', error);
       }
     } else {
-      console.error("Please select both a teacher and a subject.");
+      console.error('Please select both a teacher and a subject.');
     }
   };
 
   return (
     <div className="assign-prof-container">
-      <label htmlFor="professorSelect" className="form-label">Select a Professor:</label>
-      <select
-        id="professorSelect"
-        value={selectedProfessor}
-        onChange={handleProfessorChange}
-      >
-        <option value="">Select a Professor</option>
-        {professors.map((professor) => (
-          <option key={professor.id} value={professor.id}>
-            {professor.Name}
-          </option>
-        ))}
-      </select>
+      <Form>
+        <Form.Group as={Row} controlId="professorSelect">
+          <Col sm={{ span: 10, offset: 1 }} className="text-center">
+            <Form.Control
+              as="select"
+              value={selectedProfessor}
+              onChange={handleProfessorChange}
+              style={{ height: '50px' }} // Adjust the height as needed
+            >
+              <option value="">Select a Professor</option>
+              {professors.map((professor) => (
+                <option key={professor.id} value={professor.id}>
+                  {professor.Name}
+                </option>
+              ))}
+            </Form.Control>
+          </Col>
+        </Form.Group>
 
-      <label htmlFor="subjectSelect" className="form-label">Select a Subject:</label>
-      <select
-        id="subjectSelect"
-        value={selectedSubject}
-        onChange={handleSubjectChange}
-      >
-        <option value="">Select a Subject</option>
-        {subjectList.map((subject) => (
-          <option key={subject.id} value={subject.id}>
-            {subject.Subjectname}
-          </option>
-        ))}
-      </select>
+        <Form.Group as={Row} controlId="subjectSelect">
+          <Col sm={{ span: 10, offset: 1 }} className="text-center">
+            <Form.Control
+              as="select"
+              value={selectedSubject}
+              onChange={handleSubjectChange}
+              style={{ height: '50px' }} // Adjust the height as needed
+            >
+              <option value="">Select a Subject</option>
+              {subjectList.map((subject) => (
+                <option key={subject.id} value={subject.id}>
+                  {subject.Subjectname}
+                </option>
+              ))}
+            </Form.Control>
+          </Col>
+        </Form.Group>
 
-      <button onClick={handleAssign} className="assign-button">Assign Professor to Subject</button>
+        <Button onClick={handleAssign} className="assign-button mx-auto d-block">
+          Assign Professor to Subject
+        </Button>
+      </Form>
     </div>
   );
 }

@@ -91,7 +91,7 @@ th {
 .drop-add-con{
   display: flex;
   align-items: center;
-  gap: 36rem;
+  gap: 1rem;
 }
 
 /* DropdownContainer.css (or add this to your existing CSS) */

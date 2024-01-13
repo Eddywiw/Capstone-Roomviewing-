@@ -1,21 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '../config/firestore';
 import { collection, getDocs } from 'firebase/firestore';
-import './scheduleTBL.css'
+import { doc, deleteDoc } from 'firebase/firestore';
+import './scheduleTBL.css';
 import InsertEvent from './InsertEvent';
-import { doc, deleteDoc } from "firebase/firestore";
 import UpdateEvent from './updateEvent';
+import { Table, Button, Modal } from 'react-bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 function ScheduleTBL() {
   const [currentEvent, setCurrentEvent] = useState(null);
-  const [showUpdateEvent, setShowUpdateEvent] = useState(false); // State to control the modal
+  const [showUpdateEvent, setShowUpdateEvent] = useState(false);
   const [eventList, setEventList] = useState([]);
- 
+
   const fetchEvents = async () => {
     try {
       const querySnapshot = await getDocs(collection(db, 'schedules'));
-      const eventsData = querySnapshot.docs.map(doc => ({
+      const eventsData = querySnapshot.docs.map((doc) => ({
         id: doc.id,
-        ...doc.data()
+        ...doc.data(),
       }));
       setEventList(eventsData);
     } catch (error) {
@@ -27,34 +30,28 @@ function ScheduleTBL() {
     fetchEvents();
   }, []);
 
-  const handleAddEvent = () => {
-    setShowInsertForm(true);
-  };
+  const handleDeleteBtnClick = async (eventId) => {
+    const confirmDelete = window.confirm('Are you sure you want to delete this Event?');
 
-
-
-  const handleDeleteBtnClick = async (userId) => {
-    const confirmDelete = window.confirm("Are you sure you want to delete this Event?");
-    
     if (confirmDelete) {
       try {
-        await deleteDoc(doc(db, "schedules", userId));
-        // After successfully deleting the document, update the state to remove the deleted user from the table
-        setEventList((prevEvents) => prevEvents.filter((user) => user.id !== userId));
+        await deleteDoc(doc(db, 'schedules', eventId));
+        setEventList((prevEvents) => prevEvents.filter((event) => event.id !== eventId));
       } catch (error) {
-        console.error("Error deleting document: ", error);
+        console.error('Error deleting document: ', error);
       }
     }
   };
+
   const handleUpdateBtnClick = (event) => {
-    setCurrentEvent(event); // Pass the entire event object
+    setCurrentEvent(event);
     setShowUpdateEvent(true);
   };
-  
-  
+
   const handleCloseUpdate = () => {
     setShowUpdateEvent(false);
   };
+
   function formatFirestoreTimestamp(timestamp) {
     if (timestamp && timestamp.toDate) {
       const date = timestamp.toDate();
@@ -74,11 +71,10 @@ function ScheduleTBL() {
   return (
     <div className='use-div'>
       <div className='Event-table-container'>
-          <div className='lbl-eventlist-con'>
-            <p className='lbl-eventlist'>Events List:</p>
-          </div>
-        <table className='Eventtable'>
-          
+        <div className='lbl-eventlist-con'>
+          <p className='lbl-eventlist'>Events List:</p>
+        </div>
+        <Table striped bordered hover>
           <thead>
             <tr>
               <th>Date</th>
@@ -91,34 +87,39 @@ function ScheduleTBL() {
           <tbody>
             {eventList.map((event, index) => (
               <tr key={index}>
-                <td>{formatFirestoreTimestamp(event.Start).date}</td>
+                <td>
+                  {event.Day} | {`${formatFirestoreTimestamp(event.Start).date} - ${formatFirestoreTimestamp(event.End).date}`}
+                </td>
                 <td>{`${formatFirestoreTimestamp(event.Start).time} - ${formatFirestoreTimestamp(event.End).time}`}</td>
                 <td>{event.Title}</td>
                 <td>{event.Professor}</td>
                 <td>
-                  <div className='button-div'>
-                    <button onClick={() => handleUpdateBtnClick(event)} className='editbtn'>Edit</button>
-                    <button onClick={() => handleDeleteBtnClick(event.id)} className='deletebtn'>Delete</button>
-                  </div>
+                <div className='d-flex justify-content-center'>
+                  <Button pill variant='primary' className='mr-3' onClick={() => handleUpdateBtnClick(event)}>
+                    Edit
+                  </Button>
+                  <Button variant='danger' onClick={() => handleDeleteBtnClick(event.id)}>
+                    Remove
+                  </Button>
+                </div>
+
                 </td>
               </tr>
             ))}
           </tbody>
-        </table>
+        </Table>
       </div>
-      
+
       {showUpdateEvent && currentEvent && (
-          <div className="form-container">
-            <UpdateEvent
-              onClose={handleCloseUpdate}
-              currentEvent={currentEvent}
-              getEvent={fetchEvents}
-              timedateformat={formatFirestoreTimestamp}
-            />
-          </div>
-        )}
-
-
+        <div className='form-container'>
+          <UpdateEvent
+            onClose={handleCloseUpdate}
+            currentEvent={currentEvent}
+            getEvent={fetchEvents}
+            timedateformat={formatFirestoreTimestamp}
+          />
+        </div>
+      )}
     </div>
   );
 }

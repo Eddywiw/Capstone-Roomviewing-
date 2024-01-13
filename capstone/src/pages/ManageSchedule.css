@@ -2,11 +2,12 @@
   background-color: #d2e1e6;
   height: 100vh; /* Set the height to fill the viewport */
   display: flex;
-  justify-content: center; /* Center horizontally */
-  align-items: center; /* Center vertically */
+  align-items: center;
+  flex-direction: column;
 }
 
 .mng-con {
+  margin-top: 20px;
   display: flex;
   gap: 2rem;
   height: 500px;

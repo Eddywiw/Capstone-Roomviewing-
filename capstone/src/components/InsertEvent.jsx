@@ -3,76 +3,137 @@ import './InsertEvent.css';
 import { collection, addDoc, getDocs, query, where } from 'firebase/firestore';
 import { db } from '../config/firestore';
 
+// CustomRepeatModal component
+function CustomRepeatModal({ isOpen, onClose, onChange }) {
+  if (!isOpen) return null;
+
+  return (
+    <div>
+      <div>
+        <label>End Date:</label>
+        <input
+          type="date"
+          name="customRepeatEndDate"
+          onChange={onChange}
+          required
+        />
+      </div>
+      <div className="groupko">
+        <label>Repeat on weekdays:</label>
+        <div>
+          {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day) => (
+            <label key={day}>
+              <input
+                type="checkbox"
+                name={day}
+                onChange={onChange}
+              />
+              {day}
+            </label>
+          ))}
+        </div>
+      </div>
+      <button onClick={onClose}>Close Modal</button>
+    </div>
+  );
+}
+
 function InsertEvent() {
+  const handleCustomRepeatChange = (event) => {
+    const { name, value, checked } = event.target;
+    if (name === 'customRepeatEndDate') {
+      setCustomRepeatEndDate(value);
+    } else {
+      setSelectedWeekdays({
+        ...selectedWeekdays,
+        [name]: checked,
+      });
+    }
+  };
+
+  const handleCustomRepeatSubmit = () => {
+    setCustomRepeatModalOpen(false);
+  };
+  const [repeatOption, setRepeatOption] = useState('Just Once');
   const [selectedSection, setSelectedSection] = useState('bsit');
   const [newEvent, setNewEvent] = useState({
     title: '',
     roomNo: '',
     section: '',
-    startDate: '',
-    endDate: '',
+    date: '',
     startTime: '',
     endTime: '',
     professor: '',
   });
-  const [days, setDays] = useState({
-    monday: false,
-    tuesday: false,
-    wednesday: false,
-    thursday: false,
-    friday: false,
-    saturday: false,
+
+  const [selectedWeekdays, setSelectedWeekdays] = useState({
+    Mon: false,
+    Tue: false,
+    Wed: false,
+    Thu: false,
+    Fri: false,
+    Sat: false,
+    Sun: false,
   });
 
-  const handleDayChange = (day) => {
-    setDays((prevDays) => ({
-      ...prevDays,
-      [day]: !prevDays[day],
-    }));
-  };
+  const [customRepeatModalOpen, setCustomRepeatModalOpen] = useState(false);
+  const [customRepeatEndDate, setCustomRepeatEndDate] = useState('');
 
   const [professors, setProfessors] = useState([]);
-  const [rooms, setRooms] = useState([]);
-  const [sections, setSections] = useState([]);
-  const [dataLoaded, setDataLoaded] = useState(false);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const professorCollection = collection(db, 'teacher_subject');
-        const professorSnapshot = await getDocs(professorCollection);
-        const professorData = [];
-        professorSnapshot.forEach((doc) => {
-          const professor = doc.data();
-          professorData.push(professor);
-        });
-        setProfessors(professorData);
+    const fetchProfessors = async () => {
+      const professorCollection = collection(db, 'teacher_subject');
+      const professorSnapshot = await getDocs(professorCollection);
 
-        const roomsCollection = collection(db, 'rooms');
-        const roomsSnapshot = await getDocs(roomsCollection);
-        const roomData = [];
-        roomsSnapshot.forEach((doc) => {
-          const room = doc.data();
-          roomData.push(room);
-        });
-        setRooms(roomData);
+      const professorData = [];
+      professorSnapshot.forEach((doc) => {
+        const professor = doc.data();
+        professorData.push(professor);
+      });
 
-        const sectionsCollection = collection(db, 'section');
-        const sectionsSnapshot = await getDocs(sectionsCollection);
-        const sectionData = [];
-        sectionsSnapshot.forEach((doc) => {
-          const section = doc.data();
-          sectionData.push(section);
-        });
-        setSections(sectionData);
-
-        setDataLoaded(true);
-      } catch (error) {
-        console.error('Error fetching data: ', error);
-      }
+      setProfessors(professorData);
     };
 
-    fetchData();
+    fetchProfessors();
+  }, []);
+
+  const [rooms, setRooms] = useState([]);
+
+  useEffect(() => {
+    const fetchRooms = async () => {
+      const roomsCollection = collection(db, 'rooms');
+      const roomsSnapshot = await getDocs(roomsCollection);
+
+      const roomData = [];
+      roomsSnapshot.forEach((doc) => {
+        const room = doc.data();
+        roomData.push(room);
+      });
+
+      setRooms(roomData);
+    };
+
+    fetchRooms();
+  }, []);
+
+  const [sections, setSections] = useState([]);
+
+  useEffect(() => {
+    const fetchSections = async () => {
+      const sectionsCollection = collection(db, 'section');
+      const sectionsSnapshot = await getDocs(sectionsCollection);
+
+      const sectionData = [];
+      sectionsSnapshot.forEach((doc) => {
+        const section = doc.data();
+        sectionData.push(section);
+      });
+
+      setSections(sectionData);
+    };
+
+    fetchSections();
   }, []);
 
   const handleChange = (event) => {
@@ -86,107 +147,75 @@ function InsertEvent() {
       });
     } else if (name === 'roomNo') {
       setNewEvent({ ...newEvent, [name]: value });
+    } else if (name === 'repeatOption') {
+      setRepeatOption(value);
+      if (value === 'Custom') {
+        setCustomRepeatModalOpen(true);
+      } else {
+        setCustomRepeatModalOpen(false);
+      }
     } else {
       setNewEvent({ ...newEvent, [name]: value });
     }
   };
 
+
   const handleSubmit = async (event) => {
     event.preventDefault();
-  
     try {
-      const {
-        roomNo,
-        startDate,
-        endDate,
-        startTime,
-        endTime,
-        section,
-      } = newEvent;
+      const { roomNo, date, startTime, endTime, section } = newEvent;
   
-      const existingSchedulesCollection = collection(db, 'schedules');
-      const conflictingSchedules = [];
+      if (repeatOption === 'Custom') {
+        // For custom repeat, create schedules for selected weekdays until the end date
+        const selectedDays = Object.keys(selectedWeekdays).filter(day => selectedWeekdays[day]);
   
-      const startDateTime = new Date(`${startDate} ${startTime}`);
-      const endDateTime = new Date(`${endDate} ${endTime}`);
+        const endDateTime = new Date(`${customRepeatEndDate} ${endTime}`);
+        let currentDateTime = new Date(`${date} ${startTime}`);
   
-      let currentDate = new Date(startDateTime);
+        while (currentDateTime < new Date(endDateTime.getFullYear(), endDateTime.getMonth(), endDateTime.getDate() + 1)) {
+          console.log('Checking for conflicts at', currentDateTime);
   
-      while (currentDate <= endDateTime) {
-        // Check if the current day is selected
-        const dayOfWeek = currentDate
-          .toLocaleDateString('en-US', { weekday: 'short' })
-          .toLowerCase();
+          // Add the new schedule without checking conflicts
+          await addDoc(collection(db, 'schedules'), {
+            Title: newEvent.title,
+            Roomno: roomNo,
+            Section: section,
+            Start: new Date(currentDateTime),
+            End: new Date(new Date(currentDateTime).setHours(endTime.split(':')[0], endTime.split(':')[1])),
+            Professor: newEvent.professor,
+          });
   
-        if (days[dayOfWeek]) {
-          const existingSchedulesQuery = await getDocs(
-            query(
-              existingSchedulesCollection,
-              where('Roomno', '==', roomNo),
-              where('End', '>', currentDate)
-            )
-          );
-  
-          conflictingSchedules.push(
-            ...existingSchedulesQuery.docs
-              .map((doc) => doc.data())
-              .filter((schedule) => {
-                const scheduleStart = schedule.Start.toDate().getTime();
-                const scheduleEnd = schedule.End.toDate().getTime();
-  
-                return (
-                  (startDateTime >= scheduleStart && startDateTime < scheduleEnd) ||
-                  (endDateTime > scheduleStart && endDateTime <= scheduleEnd) ||
-                  (startDateTime <= scheduleStart && endDateTime >= scheduleEnd)
-                );
-              })
-          );
+          // Move to the next occurrence
+          currentDateTime.setDate(currentDateTime.getDate() + 1);
+          while (!selectedDays.includes(currentDateTime.toLocaleString('en-US', { weekday: 'short' }))) {
+            // Move to the next day until a selected weekday is found
+            currentDateTime.setDate(currentDateTime.getDate() + 1);
+          }
         }
-  
-        currentDate.setDate(currentDate.getDate() + 1); // Move to the next day
+      } else if (repeatOption === 'Just Once') {
+        // Add the schedule for a single occurrence
+        await addDoc(collection(db, 'schedules'), {
+          Title: newEvent.title,
+          Roomno: roomNo,
+          Section: section,
+          Start: new Date(`${date} ${startTime}`),
+          End: new Date(`${date} ${endTime}`),
+          Professor: newEvent.professor,
+        });
+      }  else {
+        // Handle other repeat options (e.g., 'Just Once')
+        // ... (existing code for other repeat options)
       }
   
-      if (conflictingSchedules.length > 0) {
-        alert(
-          'Schedule conflict! Please choose a different time or room.'
-        );
-        return;
-      }
-  
-      // Add the event only on selected days
-      currentDate = new Date(startDateTime); // Reset currentDate to startDateTime
-  
-      for (const day in days) {
-        if (days[day]) {
-          await addDoc(
-            collection(db, 'schedules'),
-            {
-              Title: newEvent.title,
-              Roomno: roomNo,
-              Section: section,
-              Start: new Date(
-                `${currentDate.toISOString().split('T')[0]} ${startTime}`
-              ),
-              End: new Date(
-                `${currentDate.toISOString().split('T')[0]} ${endTime}`
-              ),
-              Professor: newEvent.professor,
-              Day: day,
-            }
-          );
-        }
-  
-        currentDate.setDate(currentDate.getDate() + 1); // Move to the next day
-      }
-  
+      // Display alert when the room is successfully added
       window.alert('Room successfully added!');
   
+      // Reset form fields
       setNewEvent({
         title: '',
         roomNo: '',
         section: '',
-        startDate: '',
-        endDate: '',
+        date: '',
         startTime: '',
         endTime: '',
         professor: '',
@@ -196,33 +225,17 @@ function InsertEvent() {
     }
   };
   
-  // Function to format date and time for display
-  const formatDateTime = (date, time) => {
-    const dateTimeString = `${date} ${time}`;
-    const dateObject = new Date(dateTimeString);
-    const formattedDateTime = dateObject.toLocaleString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: 'numeric',
-      hour12: true,
-      timeZone: 'Asia/Manila', // Adjust the timezone as needed
-    });
-
-    return formattedDateTime;
-  };
-
-  if (!dataLoaded) {
-    return <div>Loading...</div>; // or any other loading indicator
-  }
-
   return (
     <div>
       <form className="formcon" onSubmit={handleSubmit}>
         <div className="group">
           <label htmlFor="professor">Professor & Subject:</label>
-          <select name="title" value={newEvent.title} onChange={handleChange} required>
+          <select
+            name="title"
+            value={newEvent.title}
+            onChange={handleChange}
+            required
+          >
             <option value="">Select a Professor</option>
             {professors.map((professor) => (
               <option key={professor.Email} value={professor.teacherName}>
@@ -234,7 +247,12 @@ function InsertEvent() {
 
         <div className="group">
           <label htmlFor="roomNo">Room Number:</label>
-          <select name="roomNo" value={newEvent.roomNo} onChange={handleChange} required>
+          <select
+            name="roomNo"
+            value={newEvent.roomNo}
+            onChange={handleChange}
+            required
+          >
             <option value="">Select a Room</option>
             {rooms.map((room) => (
               <option key={room.Roomno} value={room.Roomno}>
@@ -246,51 +264,47 @@ function InsertEvent() {
 
         <div className="group">
           <label htmlFor="section">Section:</label>
-          <select name="section" value={newEvent.section} onChange={handleChange} required>
-            <option value="">Select Section</option>
-            <option value="BSIT-11-A">BSIT 11-A</option>
-            <option value="BSIT-21-A">BSIT 21-A</option>
-            <option value="BSIT-31-A">BSIT 31-A</option>
-            <option value="BSIT-41-A">BSIT 41-A</option>
-            <option value="BSBA-11-A">BSBA 11-A</option>
-            <option value="BSBA-21-A">BSBA 21-A</option>
-            <option value="BSBA-31-A">BSBA 31-A</option>
-            <option value="BSBA-41-A">BSBA 41-A</option>
-            <option value="HRS-11-A">HRS 11-A</option>
-            <option value="HRS-21-A">HRS 21-A</option>
-            <option value="GAS-11">GAS 11</option>
-            <option value="GAS-12">GAS 12</option>
-            <option value="MAWD-11">MAWD 11</option>
-            <option value="MAWD-12">MAWD 12</option>
-            <option value="CULART-11">CULART 11</option>
-            <option value="CULART-12">CULART 12</option>
-            <option value="ABM-11">ABM 11</option>
-            <option value="ABM-12">ABM 12</option>
+          <select
+            name="section"
+            value={newEvent.section}
+            onChange={handleChange}
+            required
+          >
+              <option value="">Select Section</option>
+              <option value="BSIT 11-A">BSIT 11-A</option>
+              <option value="BSIT 21-A">BSIT 21-A</option>
+              <option value="BSIT 31-A">BSIT 31-A</option>
+              <option value="BSIT 41-A">BSIT 41-A</option>
+              <option value="BSBA 11-A">BSBA 11-A</option>
+              <option value="BSBA 21-A">BSBA 21-A</option>
+              <option value="BSBA 31-A">BSBA 31-A</option>
+              <option value="BSBA 41-A">BSBA 41-A</option>
+              <option value="HRS 11-A">HRS 11-A</option>
+              <option value="HRS 21-A">HRS 21-A</option>
+              <option value="GAS 11">GAS 11</option>
+              <option value="GAS 12">GAS 12</option>
+              <option value="MAWD 11">MAWD 11</option>
+              <option value="MAWD 12">MAWD 12</option>
+              <option value="CULART 11">CULART 11</option>
+              <option value="CULART 12">CULART 12</option>
+              <option value="ABM 11">ABM 11</option>
+              <option value="ABM 12">ABM 12</option>
+
           </select>
         </div>
 
         <div className="group">
-          <label htmlFor="startDate">Start Date:</label>
           <input
             placeholder=""
             type="date"
-            name="startDate"
-            value={newEvent.startDate}
+            name="date"
+            value={newEvent.date}
             onChange={handleChange}
             required
           />
+          <label htmlFor="date">Date:</label>
         </div>
-        <div className="group">
-          <label htmlFor="endDate">End Date:</label>
-          <input
-            placeholder=""
-            type="date"
-            name="endDate"
-            value={newEvent.endDate}
-            onChange={handleChange}
-            required
-          />
-        </div>
+
         <div className="timecon">
           <div className="group">
             <label htmlFor="startTime">Start Time:</label>
@@ -318,75 +332,29 @@ function InsertEvent() {
           </div>
         </div>
 
-        {/* Display formatted start and end times */}
         <div className="group">
-          <label htmlFor="formattedStartTime">Formatted Start Time:</label>
-          <span>{formatDateTime(newEvent.startDate, newEvent.startTime)}</span>
-        </div>
-        <div className="group">
-          <label htmlFor="formattedEndTime">Formatted End Time:</label>
-          <span>{formatDateTime(newEvent.endDate, newEvent.endTime)}</span>
+          <label htmlFor="repeatOption">Repeat:</label>
+          <select
+            name="repeatOption"
+            value={repeatOption}
+            onChange={handleChange}
+            required
+
+          > 
+            <option value="Just Once">Just Once</option>
+            <option value="Custom">Custom</option>
+          </select>
         </div>
 
-        <div className="groupko">
-          <label htmlFor="repeatDays">Repeats on:</label>
-          <div className="checkbox-group">
-            <label>
-              <input
-                type="checkbox"
-                name="monday"
-                checked={days.monday}
-                onChange={() => handleDayChange('monday')}
-              />
-              <span className="custom-checkbox">M</span>
-            </label>
-            <label>
-              <input
-                type="checkbox"
-                name="tuesday"
-                checked={days.tuesday}
-                onChange={() => handleDayChange('tuesday')}
-              />
-              <span className="custom-checkbox">T</span>
-            </label>
-            <label>
-              <input
-                type="checkbox"
-                name="wednesday"
-                checked={days.wednesday}
-                onChange={() => handleDayChange('wednesday')}
-              />
-              <span className="custom-checkbox">W</span>
-            </label>
-            <label>
-              <input
-                type="checkbox"
-                name="thursday"
-                checked={days.thursday}
-                onChange={() => handleDayChange('thursday')}
-              />
-              <span className="custom-checkbox">Th</span>
-            </label>
-            <label>
-              <input
-                type="checkbox"
-                name="friday"
-                checked={days.friday}
-                onChange={() => handleDayChange('friday')}
-              />
-              <span className="custom-checkbox">F</span>
-            </label>
-            <label>
-              <input
-                type="checkbox"
-                name="saturday"
-                checked={days.saturday}
-                onChange={() => handleDayChange('saturday')}
-              />
-              <span className="custom-checkbox">Sa</span>
-            </label>
-          </div>
-        </div>
+        <CustomRepeatModal
+          isOpen={customRepeatModalOpen}
+          onClose={() => setCustomRepeatModalOpen(false)}
+          onChange={handleCustomRepeatChange}
+        />
+
+
+
+
 
         <div>
           <button type="submit" className="submitbtn">

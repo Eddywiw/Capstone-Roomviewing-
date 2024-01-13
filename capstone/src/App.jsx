@@ -16,6 +16,10 @@ import ManageSubject from './pages/ManageSubject';
 import ManageTeacher from './pages/ManageTeacher';
 import ManageSchedule from './pages/ManageSchedule'
 import AdminNotification from './pages/AdminNotification';
+import Archive from './pages/Archive';
+import SubjectArchives from './components/SubjectArchives';
+import NotificationArchives from './components/NotificationArchives';
+import Pending from './components/Pending';
 function App() {
   const AppLayout = () => (
     <>
@@ -54,6 +58,10 @@ function App() {
          <Route path="/mngSchedule" element={<ManageSchedule/>}/>
          <Route path="/AdminNotification" element={<AdminNotification/>}/>
          <Route path="/admin" element={<AdminPage/>}/>
+         <Route path="/archives" element={<Archive/>}/>
+         <Route path="/subjectarchives" element={<SubjectArchives/>}/>
+         <Route path="/notificationarchives" element={<NotificationArchives/>}/>
+         <Route path="/pendingnotif" element={<Pending/>}/>
         </Route>
       </Routes>
       <Routes>

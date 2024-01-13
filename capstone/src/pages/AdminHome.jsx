@@ -1,44 +1,36 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import ScheduleTBL from '../components/scheduleTBL';
-import './AdminHome.css';
-import * as IoIcons from "react-icons/io";
 import { db } from '../config/firestore';
-import {
-  QuerySnapshot,
-  collection,
-  onSnapshot,
-} from 'firebase/firestore';
-import Chart from 'chart.js/auto';
+import { collection, onSnapshot } from 'firebase/firestore';
+import * as IoIcons from 'react-icons/io';
+import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap CSS
+import { Row, Col, Card } from 'react-bootstrap'; // Import Bootstrap components
 
 function AdminHome() {
   const [totalStudentsBSIT, setTotalStudentsBSIT] = useState(0);
   const [totalStudentsBSBA, setTotalStudentsBSBA] = useState(0);
   const [totalStudentsHRS, setTotalStudentsHRS] = useState(0);
   const [totalprof, setTotalprof] = useState(0);
+
   useEffect(() => {
-    // Create references to the "bsit" and "bsba" collections
     const bsitCollection = collection(db, 'bsit');
     const bsbaCollection = collection(db, 'bsba');
     const hrsCollection = collection(db, 'hrs');
-    const profCollection = collection(db, 'professor')
-    // Listen for changes in the "bsit" collection
-    const unsubscribeProf = onSnapshot(profCollection, (querySnapshot) =>{
+    const profCollection = collection(db, 'professor');
+
+    const unsubscribeProf = onSnapshot(profCollection, (querySnapshot) => {
       setTotalprof(querySnapshot.size);
-    })
+    });
     const unsubscribeBSIT = onSnapshot(bsitCollection, (querySnapshot) => {
       setTotalStudentsBSIT(querySnapshot.size);
     });
-
-    // Listen for changes in the "bsba" collection
     const unsubscribeBSBA = onSnapshot(bsbaCollection, (querySnapshot) => {
       setTotalStudentsBSBA(querySnapshot.size);
     });
-
-    const unsubscribeHRS= onSnapshot(hrsCollection, (querySnapshot) => {
+    const unsubscribeHRS = onSnapshot(hrsCollection, (querySnapshot) => {
       setTotalStudentsHRS(querySnapshot.size);
     });
 
-    // Cleanup the listeners when the component unmounts
     return () => {
       unsubscribeProf();
       unsubscribeBSIT();
@@ -49,54 +41,41 @@ function AdminHome() {
 
   const totalStudents = totalStudentsBSIT + totalStudentsBSBA + totalStudentsHRS;
 
-
- 
-
   return (
-    <div className='mainadhome-con'>
-      <div className='bgcolor'>
-        <div className='lbl_dashboard'>
-          <p>My Dashboard</p>
-        </div>
-        <div className='tota-con'>
-          
-          <div className='courses'>
-            <p>BSIT: {totalStudentsBSIT}</p>
-            <p>BSBA: {totalStudentsBSBA}</p>
-            <p>HRS: {totalStudentsHRS}</p>
+    <div className='container mt-4'>
+      <div className='bg-light p-4 rounded'>
+        <h3 className='mb-4'>My Dashboard</h3>
 
-          </div>
+        <Row className='mb-4'>
+          <Col lg={4} md={6}>
+            <Card>
+              <Card.Body>
+                <Card.Title>Total Students</Card.Title>
+                <Card.Text>
+                  <p>Total Students: {totalStudents}</p>
+                </Card.Text>
+                <IoIcons.IoMdPeople className='icon-people1' />
+              </Card.Body>
+            </Card>
+          </Col>
 
-          <div className='strands'>
-            <p>GAS: </p>
-            <p>ABM: </p>
-            <p>MAWD: </p>
-            <p>CULART: </p>
-          </div>
+          <Col lg={4} md={6}>
+            <Card>
+              <Card.Body>
+                <Card.Title>Total Professors</Card.Title>
+                <Card.Text>
+                  <p>Total Professors: {totalprof}</p>
+                </Card.Text>
+                <IoIcons.IoMdPeople className='icon-people' />
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
 
-          <div className='totalstudents'>
-            <div className='totalstu_lbl'>
-              <p>Total Students: {totalStudents}</p>
-            </div>
-            <div className='icon-totalstu'>
-            <IoIcons.IoMdPeople className="icon-people1" />
-            </div>
-          </div>
-          <div className='totalprof'>
-            <div className='totalprof_lbl'>
-              <p>Total Professors: {totalprof}</p>
-            </div>
-            <div className='icon-totalprof'>
-            <IoIcons.IoMdPeople className="icon-people" />
-            </div>
-            
-          </div>
-        </div>
-        <div className="schedule-con">
+        <div className='schedule-con'>
           <ScheduleTBL />
         </div>
       </div>
-    
     </div>
   );
 }

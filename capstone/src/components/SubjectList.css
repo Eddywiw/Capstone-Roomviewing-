@@ -22,6 +22,7 @@
     padding: 15px;
     border-radius: 5px;
     transition: background-color 0.3s ease;
+    width: 400px;
   }
   
   .subject-list-container li:hover {
@@ -37,3 +38,15 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
   
+  .listdiv{
+    display: flex;
+    flex-direction: row;
+    align-content: center;
+    gap: 10px;
+  }
+
+  .remove_button{
+    height: 50px;
+    border-radius: 5px;
+    background-color: #199bd3;
+  }
