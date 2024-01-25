@@ -16,11 +16,18 @@ function AddSubject() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+  
+    // Check if the subject name is empty
+    if (newSubject.subjectname.trim() === '') {
+      alert('Please enter a subject!');
+      return; // Stop execution if the subject name is empty
+    }
+  
     try {
       // Check if the subject name already exists
       const subjectQuery = collection(db, 'subject');
       const querySnapshot = await getDocs(query(subjectQuery, where('Subjectname', '==', newSubject.subjectname)));
-
+  
       if (!querySnapshot.empty) {
         // Subject name already exists, display an alert
         alert('Subject already exists!');
@@ -29,9 +36,9 @@ function AddSubject() {
         const docRef = await addDoc(subjectQuery, {
           Subjectname: newSubject.subjectname
         });
-
+  
         console.log('Document written with ID: ', docRef.id);
-
+  
         // Clear the form inputs after successful addition
         setNewSubject({
           subjectname: ''
@@ -41,6 +48,7 @@ function AddSubject() {
       console.error('Error adding document: ', error);
     }
   };
+  
 
   return (
     <Row className='mb-3'>

@@ -93,7 +93,23 @@ th {
   align-items: center;
   gap: 1rem;
 }
+.tdconuser{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
 
+.thconuser{
+ display: flex;
+ align-items: center;
+ flex-direction: column;
+ gap: 0.3rem;
+}
+
+.deleteallcon{
+  justify-content: center;
+
+}
 /* DropdownContainer.css (or add this to your existing CSS) */
 .dropdown-con {
   position: relative;

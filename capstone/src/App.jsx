@@ -20,6 +20,10 @@ import Archive from './pages/Archive';
 import SubjectArchives from './components/SubjectArchives';
 import NotificationArchives from './components/NotificationArchives';
 import Pending from './components/Pending';
+import Accept from './components/Accept'
+import Declined from './components/Declined';
+import AccountArchives from './components/AccountArchives';
+import SchedulesArchives from './components/SchedulesArchives';
 function App() {
   const AppLayout = () => (
     <>
@@ -62,6 +66,10 @@ function App() {
          <Route path="/subjectarchives" element={<SubjectArchives/>}/>
          <Route path="/notificationarchives" element={<NotificationArchives/>}/>
          <Route path="/pendingnotif" element={<Pending/>}/>
+         <Route path="/acceptnotif" element={<Accept/>}/>
+         <Route path="/declinednotif" element={<Declined/>}/>
+         <Route path="/schedulearchives" element={<SchedulesArchives/>}/>
+         <Route path="/accountarchives" element={<AccountArchives/>}/>
         </Route>
       </Routes>
       <Routes>

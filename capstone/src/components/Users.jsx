@@ -15,8 +15,11 @@ import * as XLSX from 'xlsx';
 import Schedulemodal from './Schedulemodal';
 import { Table, Button, Modal, Dropdown } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 function Users() {
   const [existingStudents, setExistingStudents] = useState([]); 
+  const [selectedUsers, setSelectedUsers] = useState([]);
+
   useEffect(() => {
     // Fetch existing students on component mount
     getExistingStudents();
@@ -123,30 +126,62 @@ function Users() {
     const handleEnrollmentChange = (event) => {
       setEnrollment(event.target.value);
     };
-
     const handleExcelUpload = async (event) => {
       const file = event.target.files[0];
     
       if (file) {
-        const reader = new FileReader();
-        reader.onload = async (e) => {
-          const data = new Uint8Array(e.target.result);
-          const workbook = XLSX.read(data, { type: 'array' });
-          const sheetName = workbook.SheetNames[0]; // Assuming data is in the first sheet
+        // Check if the uploaded file is an Excel file
+        if (
+          file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' || // .xlsx
+          file.type === 'application/vnd.ms-excel' // .xls
+        ) {
+          // Show confirmation alert with the file name
+          const confirmUpload = window.confirm(`Do you want to upload the Excel file "${file.name}"?`);
     
-          const sheet = workbook.Sheets[sheetName];
-          const jsonData = XLSX.utils.sheet_to_json(sheet);
+          if (confirmUpload) {
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+              const data = new Uint8Array(e.target.result);
+              const workbook = XLSX.read(data, { type: 'array' });
+              const sheetName = workbook.SheetNames[0]; // Assuming data is in the first sheet
     
-          // Now you have jsonData with the Excel data, you can add it to Firestore and update your state.
-          await addDataToFirestore(jsonData);
+              const sheet = workbook.Sheets[sheetName];
+              const jsonData = XLSX.utils.sheet_to_json(sheet);
     
-          // Set the selected file name
-          setSelectedFileName(file.name);
-        };
+              // Check if the course in the Excel file matches the selected course
+              const firstRow = jsonData[0] || {};
+              const excelCourse = (firstRow.Program || '').toLowerCase();
     
-        reader.readAsArrayBuffer(file);
+              if (excelCourse === selectedCourse.toLowerCase()) {
+                // Now you have jsonData with the Excel data, you can add it to Firestore and update your state.
+                await addDataToFirestore(jsonData);
+    
+                // Set the selected file name
+                setSelectedFileName(file.name);
+                   // Show success alert
+                  alert('File uploaded successfully!');
+              } else {
+                // Show an error message if the course doesn't match
+                alert(`The uploaded file is for "${excelCourse}" course, but you have selected "${selectedCourse}" course.`);
+              }
+            };
+    
+            reader.readAsArrayBuffer(file);
+          } else {
+            // User clicked "Cancel" in the confirmation alert
+            alert('Excel upload canceled.');
+          }
+        } else {
+          // Invalid file type, show an alert
+          alert('Invalid file type. Please upload an Excel file.');
+        }
+      } else {
+        // No file selected
+        alert('Please select an Excel file.');
       }
     };
+    
+    
     
     const addDataToFirestore = async (jsonData) => {
       let usersAdded = false; // Flag to check if any user has been added
@@ -156,6 +191,15 @@ function Users() {
           // Check if the account already exists
           const existingStudent = existingStudents.find((student) => student.Studentno === row.Studentno);
     
+          const auth = getAuth();
+          const userCredential = await createUserWithEmailAndPassword(
+            auth,
+            row.Email,
+            row.Password
+          );
+
+          const user = userCredential.user;
+          console.log('User created:', user);
           if (!existingStudent) {
             // Add the new account to Firestore
             const docRef = await addDoc(collection(db, selectedCourse), {
@@ -212,17 +256,26 @@ function Users() {
  
   const handleDeleteBtnClick = async (userId) => {
     const confirmDelete = window.confirm("Are you sure you want to delete this User?");
-    
+  
     if (confirmDelete) {
       try {
+        // Get the user data before deletion
+        const userToDelete = users.find((user) => user.id === userId);
+  
+        // Add the user data to the "AccountArchives" collection
+        await addDoc(collection(db, 'AccountArchives'), userToDelete);
+  
+        // Delete the user from the original collection
         await deleteDoc(doc(db, selectedCourse, userId));
-        // After successfully deleting the document, update the state to remove the deleted user from the table
+  
+        // Update the state to remove the deleted user from the table
         setUsers((prevUsers) => prevUsers.filter((user) => user.id !== userId));
       } catch (error) {
         console.error("Error deleting document: ", error);
       }
     }
   };
+  
   const handleAddBtnClick = () => {
     event.preventDefault();
     setShowModal(true);
@@ -256,6 +309,61 @@ function Users() {
   const handleEventAdded = (newEvent) => {
     setEventList(prevEvents => [...prevEvents, newEvent]);
   };
+
+  const handleSelectAll = () => {
+    if (selectedUsers.length === users.length) {
+      // If all users are already selected, clear the selection
+      setSelectedUsers([]);
+    } else {
+      // Otherwise, select all users
+      setSelectedUsers(users.map((user) => user.id));
+    }
+  };
+  
+  const handleSelectUser = (userId) => {
+    if (selectedUsers.includes(userId)) {
+      // If the user is already selected, remove them from the selection
+      setSelectedUsers(selectedUsers.filter((id) => id !== userId));
+    } else {
+      // Otherwise, add the user to the selection
+      setSelectedUsers([...selectedUsers, userId]);
+    }
+  };
+  const handleDeleteSelected = async () => {
+    if (selectedUsers.length === 0) {
+      // If no users are selected, display an alert
+      alert("Please select users to delete.");
+      return;
+    }
+  
+    const confirmDelete = window.confirm("Are you sure you want to delete the selected users?");
+  
+    if (confirmDelete) {
+      try {
+        // Loop through selected users and delete each one
+        for (const userId of selectedUsers) {
+          // Get the user data before deletion
+          const userToDelete = users.find((user) => user.id === userId);
+  
+          // Add the user data to the "AccountArchives" collection
+          await addDoc(collection(db, 'AccountArchives'), userToDelete);
+  
+          // Delete the user from the original collection
+          await deleteDoc(doc(db, selectedCourse, userId));
+        }
+  
+        // Update the state to remove the deleted users from the table
+        setUsers((prevUsers) => prevUsers.filter((user) => !selectedUsers.includes(user.id)));
+  
+        // Clear the selected users after deletion
+        setSelectedUsers([]);
+      } catch (error) {
+        console.error("Error deleting document: ", error);
+      }
+    }
+  };
+  
+  
   return (
     <div className='use-div'>
 
@@ -312,6 +420,16 @@ function Users() {
       <Table striped bordered hover>
           <thead>
             <tr>
+              <th className='thconuser'>
+                <div className='deleteallcon'>
+                <Button onClick={handleDeleteSelected}>Delete Selected</Button>
+                </div>
+                <input
+                  type="checkbox"
+                  checked={selectedUsers.length === users.length}
+                  onChange={handleSelectAll}
+                />
+              </th>
               <th>Enrollment Status</th>
               <th>Name</th>
               <th>Student no.</th>
@@ -334,14 +452,21 @@ function Users() {
             })
             .map((user, index) => (
               <tr key={index}>
+                <td>
+                  <input
+                    type="checkbox"
+                    checked={selectedUsers.includes(user.id)}
+                    onChange={() => handleSelectUser(user.id)}
+                  />
+                </td>
                 <td>{user.EnrollmentStatus}</td>
                 <td>{user.Name}</td>
                 <td>{user.Studentno}</td>
                 <td>{user.Course}</td>
                 <td>{user.Section}</td>
                 <td>{user.Email}</td>
-                <td>{user.Password}</td>
-                <td>
+                <td className='tdconuser'>{user.Password}
+            
                   <div className='d-flex justify-content-center'>
                     {/* Conditionally render the Add Irregular Subject button for Irregular users */}
                  
@@ -367,6 +492,8 @@ function Users() {
             }
           </tbody>
         </Table>
+        
+
 
 
 

@@ -1,17 +1,34 @@
 import React, { useState,useEffect } from 'react'
 import { collection, getDocs } from "firebase/firestore";
-import { doc, deleteDoc } from "firebase/firestore";
+import { doc, deleteDoc, addDoc } from "firebase/firestore";
 import CreateUser from './CreateUser';
 import UpdateUser from './UpdateUser';
 import './Users.css'
 import {db} from '../config/firestore'
 import CreateProfessor from './CreateProfessor';
 import UpdateProfessor from './UpdateProfessor';
+import * as XLSX from 'xlsx';
 import { Table, Button, Modal, Dropdown } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 function Professor() {
   const [currentProf, setCurrentProf] = useState(null);
   const [profs, setProfs] = useState([]);
+  const [selectedFileName, setSelectedFileName] = useState('');
+  const [existingStudents, setExistingStudents] = useState([]); 
+  useEffect(() => {
+    // Fetch existing students on component mount
+    getExistingStudents();
+  }, []);
+
+  const getExistingStudents = async () => {
+    try {
+      const querySnapshot = await getDocs(collection(db, 'professor'));
+      const existingStudentsData = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      setExistingStudents(existingStudentsData);
+    } catch (error) {
+      console.error("Error fetching existing students: ", error);
+    }
+  };
   const getProf = async () =>{
     const querySnapshot = await getDocs(collection(db, "professor"));
     const profs = querySnapshot.docs.map(doc => ({id: doc.id, ...doc.data()}))
@@ -73,17 +90,87 @@ function Professor() {
   const handleCloseUpdate = () => {
     setShowUpdateForm(false);
   };
+  const handleExcelUpload = async (event) => {
+    const file = event.target.files[0];
+  
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, { type: 'array' });
+        const sheetName = workbook.SheetNames[0]; // Assuming data is in the first sheet
+  
+        const sheet = workbook.Sheets[sheetName];
+        const jsonData = XLSX.utils.sheet_to_json(sheet);
+  
+        // Now you have jsonData with the Excel data, you can add it to Firestore and update your state.
+        await addDataToFirestore(jsonData);
+  
+        // Set the selected file name
+        setSelectedFileName(file.name);
+      };
+  
+      reader.readAsArrayBuffer(file);
+    }
+  };
+  
+  const addDataToFirestore = async (jsonData) => {
+    let usersAdded = false; // Flag to check if any user has been added
+  
+    for (const row of jsonData) {
+      try {
+        // Check if the account already exists
+        const existingStudent = existingStudents.find((professor) => professor.ProfessorID === row.ProfessorID);
+  
+        if (!existingStudent) {
+          // Add the new account to Firestore
+          const docRef = await addDoc(collection(db, 'professor'), {
+            Name: row.Name,
+            ProfessorID: row.ProfessorID,
+            Position: row.Position,
+            Email: row.Email,
+            Password: row.Password,
+          });
+  
+          // Update the state with the new account
+          setUsers((prevUsers) => [...prevUsers, { id: docRef.id, ...row }]);
+          
+          usersAdded = true; // Set the flag to true since at least one user has been added
+        }
+      } catch (error) {
+        console.error('Error adding document: ', error);
+      }
+    }
+  
+    // Show alert if no user has been added
+    if (!usersAdded) {
+      alert('All users in the Excel file already exist in the table.');
+    }
+  };
   return (
     <div className='use-div'>
       <div className='table-container'>
+        <div className='drop-add-con'>
         <div className='addbtn-container'>
           <button className='addbtn' onClick={handleAddBtnClick}>Add +</button>
         </div>  
+        <div className='file-input-container'>
+            <input
+              type='file'
+              accept='.xls,.xlsx'
+              id='fileInput'
+              className='form-control'
+              onChange={handleExcelUpload}
+            />
+            {selectedFileName && <span className='file-name'>{selectedFileName}</span>}
+          </div>
+          </div>
        
         <Table striped bordered hover>
           <thead>
             <tr>
               <th>Name</th>
+              <th>Professor ID</th>
               <th>Position</th>
               <th>Email</th>
               <th>Password</th> 
@@ -95,6 +182,7 @@ function Professor() {
             profs.map((user, index) => (
               <tr key={index}>
                 <td>{user.Name}</td>
+                <td>{user.ProfessorID}</td>
                 <td>{user.Position}</td>
                 <td>{user.Email}</td>
                 <td>{user.Password}</td>

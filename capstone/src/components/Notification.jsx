@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './Notification.css';
 import { db } from '../config/firestore';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   collection,
   getDocs,
@@ -13,7 +14,12 @@ import NotificationUser from './NotificationUser'; // Import NotificationUser co
 
 function NotificationForm({ onClose }) {
   const [notifications, setNotifications] = useState([]);
-
+  const navigate = useNavigate();
+  const handleview = () => {
+    onClose(); // Close the NotificationForm
+    navigate('/pendingnotif');
+  }
+  
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -100,7 +106,7 @@ function NotificationForm({ onClose }) {
               <p>Teacher: {notification.teacherName}</p>
               <p>Requested room: {notification.roomNumber}</p>
               <p>Date: {notification.date}</p>
-              <p>Time: {notification.time}</p>
+              <p>Time: {notification.time} - {notification.endtime}</p>
               <p>For the Reason: {notification.reason}</p>
               <div className='acceptbtn-con'>
                 <button
@@ -123,7 +129,7 @@ function NotificationForm({ onClose }) {
 
       </div>
       <div className='viewallcon'>
-        <p className='viewalltext'>View All</p>
+        <p className='viewalltext' onClick={handleview}>View All</p>
       </div>
     </div>
   );

@@ -1,59 +1,88 @@
-import React, { useState } from 'react';
-import './CreateUser.css';
-import { collection, addDoc } from "firebase/firestore";
+import React, { useState, useEffect } from 'react';
+import { collection, addDoc, getDocs } from "firebase/firestore";
 import { db } from '../config/firestore';
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
-function CreateProfessor({ onClose, onStudentAdded, getProfessor}) {
-  const [newProfesor, setNewProfessor] = useState({
+import { Modal, Button, Form } from 'react-bootstrap';
+import './CreateUser.css';
+
+function CreateProfessor({ onClose, onStudentAdded, getProfessor }) {
+  const [newProfessor, setNewProfessor] = useState({
     name: "",
+    professorid: "",
     position: "",
     email: "",
     password: ""
   });
-  
 
   const handleChange = (event) => {
     const { name, value } = event.target;
-    setNewProfessor({ ...newProfesor, [name]: value });
+    setNewProfessor({ ...newProfessor, [name]: value });
+  };
+  const [existingStudents, setExistingStudents] = useState([]);
+  useEffect(() => {
+    // Fetch existing students on component mount
+    getExistingStudents();
+  }, []);
+
+  const getExistingStudents = async () => {
+    try {
+      const querySnapshot = await getDocs(collection(db, "professor"));
+      const existingStudentsData = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      setExistingStudents(existingStudentsData);
+    } catch (error) {
+      console.error("Error fetching existing students: ", error);
+    }
   };
 
   async function handleSubmit(event) {
     event.preventDefault();
-  
+    const existingStudent = existingStudents.find((professor) => {
+      const existingStudentNo = String(professor.ProfessorID).toLowerCase();
+      const newStudentNo = String(newProfessor.professorid).toLowerCase();
+      return existingStudentNo === newStudentNo;
+    });
+
+    if (existingStudent) {
+      alert('A user with the same profossor id already exists. Please use a different professor id.');
+      return;
+    }
     try {
       const auth = getAuth();
       const userCredential = await createUserWithEmailAndPassword(
         auth,
-        newProfesor.email,
-        newProfesor.password
+        newProfessor.email,
+        newProfessor.password
       );
-  
+
       const user = userCredential.user;
       console.log('User created:', user);
-  
-      // Now you can proceed to add student data to Firestore
+
+      // Now you can proceed to add professor data to Firestore
       const docRef = await addDoc(collection(db, 'professor'), {
-        Name: newProfesor.name,
-        Position: newProfesor.position,
-        Email: newProfesor.email,
-        Password: newProfesor.password,
+        Name: newProfessor.name,
+        ProfessorID: newProfessor.professorid,
+        Position: newProfessor.position,
+        Email: newProfessor.email,
+        Password: newProfessor.password,
       });
-  
-      // Call the onStudentAdded callback with the new student data
+
+      // Call the onStudentAdded callback with the new professor data
       onStudentAdded({
-        Name: newProfesor.name,
-        Position: newProfesor.position,
-        Email: newProfesor.email,
-        Password: newProfesor.password,
+        Name: newProfessor.name,
+        ProfessorID: newProfessor.professorid,
+        Position: newProfessor.position,
+        Email: newProfessor.email,
+        Password: newProfessor.password,
       });
-  
+
       console.log('Document written with ID: ', docRef.id);
-  
+
       // Close the CreateUser modal after successful addition
       onClose();
-          // Display alert when the room is successfully added
+
+      // Display alert when the professor is successfully added
       window.alert("Professor successfully added!");
-  
+
       // Clear the form inputs after successful addition
       setNewProfessor({
         name: '',
@@ -67,64 +96,68 @@ function CreateProfessor({ onClose, onStudentAdded, getProfessor}) {
   }
 
   return (
-    <div className='usemain'>
-      <button className="exit-btn" onClick={onClose}>
-        X
-      </button>
-      <span className="title">Add Student</span>
-      <form className="form" onSubmit={handleSubmit}>
-        <div className="group">
-          <input
-            placeholder=""
-            type="text"
-            name="name"
-            value={newProfesor.name}
-            onChange={handleChange}
-            required
-          />
-          <label htmlFor="name">Name:</label>
-        </div>
-        <div className="group">
-          <input
-            placeholder=""
-            type="text"
-            name="position"
-            value={newProfesor.position}
-            onChange={handleChange}
-            required
-          />
-          <label htmlFor="studentno">Position:</label>
-        </div>
-
-        <div className="group">
-          <input
-            placeholder=""
-            type="text"
-            name="email"
-            value={newProfesor.email}
-            onChange={handleChange}
-            required
-          />
-          <label htmlFor="email">Email:</label>
-        </div>
-
-        <div className="group">
-          <input
-            placeholder=""
-            type="text"
-            name="password"
-            value={newProfesor.password}
-            onChange={handleChange}
-            required
-          />
-          <label htmlFor="password">Password:</label>
-        </div>
-
-        <button className='addstubtn' type="submit">
-          Add
-        </button>
-      </form>
-    </div>
+    <Modal show={true} onHide={onClose}>
+      <Modal.Header closeButton>
+        <Modal.Title>Add Professor</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Form onSubmit={handleSubmit}>
+          <Form.Group controlId="formName">
+            <Form.Label>Name:</Form.Label>
+            <Form.Control
+              type="text"
+              name="name"
+              value={newProfessor.name}
+              onChange={handleChange}
+              required
+            />
+          </Form.Group>
+          <Form.Group controlId="formProfessorID">
+            <Form.Label>ProfessorID:</Form.Label>
+            <Form.Control
+              type="text"
+              name="professorid"
+              value={newProfessor.professorid}
+              onChange={handleChange}
+              required
+            />
+          </Form.Group>
+          <Form.Group controlId="formPosition">
+            <Form.Label>Position:</Form.Label>
+            <Form.Control
+              type="text"
+              name="position"
+              value={newProfessor.position}
+              onChange={handleChange}
+              required
+            />
+          </Form.Group>
+          <Form.Group controlId="formEmail">
+            <Form.Label>Email:</Form.Label>
+            <Form.Control
+              type="text"
+              name="email"
+              value={newProfessor.email}
+              onChange={handleChange}
+              required
+            />
+          </Form.Group>
+          <Form.Group controlId="formPassword">
+            <Form.Label>Password:</Form.Label>
+            <Form.Control
+              type="password"
+              name="password"
+              value={newProfessor.password}
+              onChange={handleChange}
+              required
+            />
+          </Form.Group>
+          <Button variant="primary" type="submit">
+            Add
+          </Button>
+        </Form>
+      </Modal.Body>
+    </Modal>
   );
 }
 

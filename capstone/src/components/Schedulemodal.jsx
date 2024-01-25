@@ -24,6 +24,18 @@ function Schedulemodal({ onClose, onSelectSchedule, currentUser }) {
     fetchSchedules();
   }, []);
 
+  // Use a set to keep track of unique combinations of "Title" and "Professor"
+  const uniqueCombinationsSet = new Set();
+
+  const uniqueSchedules = schedules.filter((schedule) => {
+    const combination = `${schedule.Title} - ${schedule.Professor}`;
+    if (!uniqueCombinationsSet.has(combination)) {
+      uniqueCombinationsSet.add(combination);
+      return true;
+    }
+    return false;
+  });
+
   const handleSelectSchedule = (schedule) => {
     setSelectedSchedule(schedule);
   };
@@ -42,7 +54,7 @@ function Schedulemodal({ onClose, onSelectSchedule, currentUser }) {
       <div className="schedule-modal">
         <h2>Select a Schedule</h2>
         <ul className="schedule-list">
-          {schedules.map((schedule) => (
+          {uniqueSchedules.map((schedule) => (
             <li
               key={schedule.id}
               onClick={() => handleSelectSchedule(schedule)}

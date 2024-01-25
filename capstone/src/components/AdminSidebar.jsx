@@ -56,12 +56,12 @@ export const AdminSidebarData = [
     },
     {
       title: 'Accepted',
-      path: '/archives/revenue',
+      path: '/acceptnotif',
       icon: <IoIcons.IoIosPaper />
     },
     {
       title: 'Declined',
-      path: '/archives/revenue',
+      path: '/declinednotif',
       icon: <IoIcons.IoIosPaper />
     }
   ]
@@ -77,30 +77,20 @@ export const AdminSidebarData = [
 
     subNav: [
       {
-        title: 'Notification Archives',
-        path: '/notificationarchives',
-        icon: <IoIcons.IoIosPaper />
-      },
-      {
         title: 'Subject Archives',
         path: '/subjectarchives',
         icon: <IoIcons.IoIosPaper />
       },
       {
         title: 'Schedules Archives',
-        path: '/archives/revenue',
+        path: '/schedulearchives',
         icon: <IoIcons.IoIosPaper />
       },
       {
         title: 'Account Archives',
-        path: '/archives/revenue',
+        path: '/accountarchives',
         icon: <IoIcons.IoIosPaper />
       },
-      {
-        title: 'Room Archives',
-        path: '/archives/revenue',
-        icon: <IoIcons.IoIosPaper />
-      }
     ]
   },
 

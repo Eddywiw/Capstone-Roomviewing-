@@ -17,6 +17,9 @@ function ManageRoom() {
   const [isCreateRoomVisible, setIsCreateRoomVisible] = useState(false);
   const [isUpdateRoomVisible, setIsUpdateRoomVisible] = useState(false);
 
+  const handleStudentAdded =(newRoom) =>{
+    setRoomEntries((prevUsers) => [...prevUsers, newRoom])
+  }
   useEffect(() => {
     const fetchData = async () => {
       const querySnapshot = await getDocs(collection(db, 'rooms'));
@@ -95,7 +98,7 @@ function ManageRoom() {
                   <Button variant='outline-primary' onClick={() => toggleUpdateRoom(entry)}>
                     Edit
                   </Button>
-                  <Button variant='danger' onClick={() => handleDeleteBtnClick(entry.id)}>
+                  <Button variant='outline-danger' onClick={() => handleDeleteBtnClick(entry.id)}>
                     Delete
                   </Button>
                 </div>

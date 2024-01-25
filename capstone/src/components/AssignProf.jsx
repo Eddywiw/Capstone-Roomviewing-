@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { collection, getDocs, addDoc, doc, getDoc } from 'firebase/firestore';
+import { collection, getDocs, addDoc, doc, getDoc, where } from 'firebase/firestore';
 import { db } from '../config/firestore';
 import { Form, Button, Row, Col } from 'react-bootstrap';
 import './AssignProf.css';
@@ -55,22 +55,34 @@ function AssignProf() {
         const professorRef = doc(db, 'professor', selectedProfessor);
         const professorSnap = await getDoc(professorRef);
         const professorName = professorSnap.data().Name;
-
+  
         const subjectRef = doc(db, 'subject', selectedSubject);
         const subjectSnap = await getDoc(subjectRef);
         const subjectName = subjectSnap.data().Subjectname;
-
-        await addDoc(collection(db, 'teacher_subject'), {
-          teacherId: selectedProfessor,
-          teacherName: professorName,
-          subjectId: selectedSubject,
-          subjectName: subjectName,
-        });
-
-        setSelectedProfessor('');
-        setSelectedSubject('');
-
-        console.log('Teacher assigned to subject.');
+  
+        // Check if the combination of teacher and subject already exists
+        const existingAssignment = await getDocs(collection(db, 'teacher_subject'), 
+          where('teacherId', '==', selectedProfessor),
+          where('subjectId', '==', selectedSubject)
+        );
+  
+        if (existingAssignment.docs.length > 0) {
+          // Alert that the selected Professor already has a subject
+          alert(`Professor ${professorName} already assigned to ${subjectName}.`);
+        } else {
+          // Add the new record to the teacher_subject collection
+          await addDoc(collection(db, 'teacher_subject'), {
+            teacherId: selectedProfessor,
+            teacherName: professorName,
+            subjectId: selectedSubject,
+            subjectName: subjectName,
+          });
+  
+          setSelectedProfessor('');
+          setSelectedSubject('');
+  
+          console.log('Teacher assigned to subject.');
+        }
       } catch (error) {
         console.error('Error assigning teacher: ', error);
       }
@@ -78,6 +90,7 @@ function AssignProf() {
       console.error('Please select both a teacher and a subject.');
     }
   };
+  
 
   return (
     <div className="assign-prof-container">

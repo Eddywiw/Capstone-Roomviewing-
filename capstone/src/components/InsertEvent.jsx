@@ -2,39 +2,47 @@ import React, { useState, useEffect } from 'react';
 import './InsertEvent.css';
 import { collection, addDoc, getDocs, query, where } from 'firebase/firestore';
 import { db } from '../config/firestore';
-
+import { Modal, Button, Form } from 'react-bootstrap';
 // CustomRepeatModal component
 function CustomRepeatModal({ isOpen, onClose, onChange }) {
   if (!isOpen) return null;
 
   return (
-    <div>
-      <div>
-        <label>End Date:</label>
-        <input
-          type="date"
-          name="customRepeatEndDate"
-          onChange={onChange}
-          required
-        />
-      </div>
-      <div className="groupko">
-        <label>Repeat on weekdays:</label>
-        <div>
-          {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day) => (
-            <label key={day}>
-              <input
+    <Modal show={isOpen} onHide={onClose}>
+      <Modal.Header closeButton>
+        <Modal.Title>Custom Repeat</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Form>
+          <Form.Group>
+            <Form.Label>End Date:</Form.Label>
+            <Form.Control
+              type="date"
+              name="customRepeatEndDate"
+              onChange={onChange}
+              required
+            />
+          </Form.Group>
+          <Form.Group>
+            <Form.Label>Repeat on weekdays:</Form.Label>
+            {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day) => (
+              <Form.Check
+                key={day}
                 type="checkbox"
+                label={day}
                 name={day}
                 onChange={onChange}
               />
-              {day}
-            </label>
-          ))}
-        </div>
-      </div>
-      <button onClick={onClose}>Close Modal</button>
-    </div>
+            ))}
+          </Form.Group>
+        </Form>
+      </Modal.Body>
+      <Modal.Footer>
+        <Button variant="secondary" onClick={onClose}>
+          Close Modal
+        </Button>
+      </Modal.Footer>
+    </Modal>
   );
 }
 
@@ -162,8 +170,40 @@ function InsertEvent() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+  
     try {
       const { roomNo, date, startTime, endTime, section } = newEvent;
+  
+      // Check for schedule conflicts
+    // Check for schedule conflicts
+    const scheduleCollection = collection(db, 'schedules');
+
+    // Query for schedules for the specified room on the given date
+    const dateQuery = query(
+      scheduleCollection,
+      where('Roomno', '==', roomNo),
+      where('Date', '==', date)
+    );
+    const dateConflicts = await getDocs(dateQuery);
+
+    // Check for conflicts in the fetched schedules
+    const hasConflicts = dateConflicts.docs.some((doc) => {
+      const start = new Date(doc.data().Start.toDate());
+      const end = new Date(doc.data().End.toDate());
+
+      // Check for overlap with the proposed time slot
+      return (
+        (start <= new Date(`${date}T${endTime}`) && end >= new Date(`${date}T${startTime}`)) ||
+        (new Date(`${date}T${startTime}`) <= end && new Date(`${date}T${endTime}`) >= start)
+      );
+    });
+
+    if (hasConflicts) {
+      // There is a conflict, display alert and do not add the schedule
+      window.alert('Conflict Schedule! There is an existing schedule. Please choose a different time or room.');
+      return;
+    }
+
   
       if (repeatOption === 'Custom') {
         // For custom repeat, create schedules for selected weekdays until the end date
@@ -180,9 +220,11 @@ function InsertEvent() {
             Title: newEvent.title,
             Roomno: roomNo,
             Section: section,
+            Date: date,
             Start: new Date(currentDateTime),
             End: new Date(new Date(currentDateTime).setHours(endTime.split(':')[0], endTime.split(':')[1])),
             Professor: newEvent.professor,
+            Status: 'Ongoing'
           });
   
           // Move to the next occurrence
@@ -198,12 +240,14 @@ function InsertEvent() {
           Title: newEvent.title,
           Roomno: roomNo,
           Section: section,
+          Date: date,
           Start: new Date(`${date} ${startTime}`),
           End: new Date(`${date} ${endTime}`),
           Professor: newEvent.professor,
+          Status: 'Ongoing'
         });
-      }  else {
-        // Handle other repeat options (e.g., 'Just Once')
+      } else {
+        // Handle other repeat options (e.g., 'Daily', 'Weekly')
         // ... (existing code for other repeat options)
       }
   
@@ -225,9 +269,10 @@ function InsertEvent() {
     }
   };
   
+  
   return (
     <div>
-      <form className="formcon" onSubmit={handleSubmit}>
+      <Form onSubmit={handleSubmit}>
         <div className="group">
           <label htmlFor="professor">Professor & Subject:</label>
           <select
@@ -357,11 +402,11 @@ function InsertEvent() {
 
 
         <div>
-          <button type="submit" className="submitbtn">
-            Add Event
-          </button>
+        <Button type="submit" className="btn btn-primary">
+          Add Event
+        </Button>
         </div>
-      </form>
+      </Form>
     </div>
   );
 }

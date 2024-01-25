@@ -13,12 +13,7 @@
   .sub-header{
     font-family: 'Roboto Mono', monospace;
   }
-  .login-form{
-    display: grid;
-    
-    
-  }
-  
+
   .input{
     margin-top: 5px;
     margin-bottom: 5px;
@@ -61,8 +56,96 @@
   }
   .login-form{
     background: transparent;
+    display: flex;
+    flex-direction: column;
   }
   .maindiv{
+    margin: 100px;
+    align-items: center;
+  }
+  .logo-img{
+    margin: 10px;
+    position: absolute;
+    height: 100px;
+    width: 150px;
+  }
+  @media (max-width: 720px) {
+    .logo-img{
+      margin: 20px;
+      position: absolute;
+      height: 50px;
+      width: 100px;
+    }
     
-    margin-left: 5rem;  
+
+    /* This will apply styles only when the screen width is 767px or less (typical mobile screens) */
+    .model-img {
+    display: none;
+    }
+    .maindiv{
+     margin: 1px;
+     justify-content: center;
+
+    }
+    .header-title{
+      font-size: 40px;
+    }
+    .sub-header{
+      font-size: 9px;
+      font-family: 'Roboto Mono', monospace;
+      
+    }
+
+    .login-form{
+      background: transparent;
+      align-items: center;
+    }
+    .input{
+      margin-top: 5px;
+      margin-bottom: 5px;
+      width: 200px;
+      height: 30px;
+      border: none;
+      border-radius: 5px;
+      padding-left: 1rem;
+      font-size: 10px;
+    }
+    .button-confirm{
+      width: 200px;
+      height: 30px;
+      border: none;
+      border-radius: 50px;
+      color: white;
+      background-color: blue;
+      margin-top: 5px;
+      text-decoration: none;
+      align-items: center;
+      justify-content: center;
+      display: flex;
+      margin-bottom: 10px;
+    }
+    .button-confirm:hover {
+      background-color: darkblue; /* Apply a different color on hover */
+    }
+    .parent{
+      overflow: hidden;
+
+    }
+    .header {
+      border-radius: 5px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: transparent;
+      justify-content: center;
+      backdrop-filter: blur(20px); /* Adjust the blur value as needed */
+      /* Additional styling for cross-browser compatibility */
+      -webkit-backdrop-filter: blur(10px);
+      background-color: rgba(255, 255, 255, 0.5); /* Adjust the alpha value for transparency */
+    }
+    .error-message{
+      font-size: 10px;
+    }
+  
+
   }

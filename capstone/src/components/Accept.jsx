@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { collection, onSnapshot, doc, deleteDoc, addDoc } from 'firebase/firestore';
 import { db } from '../config/firestore';
 
-function SubjectArchives() {
+function AcceptData() {
   const [acceptData, setAcceptData] = useState([]);
 
   useEffect(() => {
-    const unsubscribe = onSnapshot(collection(db, 'subjectArchives'), (querySnapshot) => {
+    const unsubscribe = onSnapshot(collection(db, 'accept'), (querySnapshot) => {
       const acceptData = [];
       querySnapshot.forEach((doc) => {
         acceptData.push({ id: doc.id, ...doc.data() });
@@ -19,7 +19,7 @@ function SubjectArchives() {
 
   return (
     <div className="container mt-4">
-      <h2 className="mb-1">Subject Archives</h2>
+      <h2 className="mb-1">Accepted Request</h2>
       {acceptData.length === 0 ? (
         <p>No data available</p>
       ) : (
@@ -27,8 +27,12 @@ function SubjectArchives() {
           {acceptData.map((data) => (
             <li className="list-group-item" key={data.id}>
                 <div className="d-flex w-100 justify-content-between">
-                <h5 className="mb-1">Subject: {data.Subjectname}</h5>
+                <h5 className="mb-1">{data.reason}</h5>
+                <small>{data.date}| {data.time}</small>
                 </div>
+                <p className="mb-1">
+                Room: {data.roomNumber} | Teacher: {data.teacherName}
+                </p>
             </li>
           ))}
         </ul>
@@ -37,4 +41,4 @@ function SubjectArchives() {
   );
 }
 
-export default SubjectArchives;
+export default AcceptData;

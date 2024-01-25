@@ -24,7 +24,8 @@ function Calendar() {
         title: doc.data().Title,
         start: doc.data().Start.toDate(),
         end: doc.data().End.toDate(),
-        professor: doc.data().Professor
+        professor: doc.data().Professor,
+        roomno: doc.data().Roomno
       }));
       setEventList(eventsData);
     } catch (error) {
@@ -42,6 +43,7 @@ function Calendar() {
   };
 
   const handleModalClose = () => {
+    setSelectedEvent(null); // Reset selectedEvent when modal is closed
     eventModalRef.current.style.display = 'none';
   };
 
@@ -57,7 +59,7 @@ function Calendar() {
           localizer={localizer}
           events={eventList.map((event) => ({
             id: event.id,
-            title: `${event.title} - ${event.professor}`,
+            title: `${event.title} - ${event.professor} - ${event.roomno}`,
             start: event.start,
             end: event.end,
           }))}

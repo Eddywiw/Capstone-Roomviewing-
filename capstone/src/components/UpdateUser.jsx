@@ -2,16 +2,16 @@ import React, { useState } from 'react';
 import './UpdateUser.css';
 import { updateDoc, doc } from 'firebase/firestore';
 import { db } from '../config/firestore';
+import { Modal, Button, Form } from 'react-bootstrap';
 
 function UpdateUser({ onClose, currentStudent, getStudent, section }) {
-
   const [updatedStudent, setUpdatedStudent] = useState({
     name: currentStudent.Name,
     studentNo: currentStudent.Studentno,
     course: currentStudent.Course,
     section: currentStudent.Section,
     email: currentStudent.Email,
-    password: currentStudent.Password
+    password: currentStudent.Password,
   });
 
   const [isUpdating, setIsUpdating] = useState(false); // State to control button disabling
@@ -33,7 +33,7 @@ function UpdateUser({ onClose, currentStudent, getStudent, section }) {
         Course: updatedStudent.course,
         Section: updatedStudent.section,
         Email: updatedStudent.email,
-        Password: updatedStudent.password
+        Password: updatedStudent.password,
       });
 
       // Close the UpdateUser modal after successful update
@@ -47,85 +47,78 @@ function UpdateUser({ onClose, currentStudent, getStudent, section }) {
   };
 
   return (
-    <div className="updatemain">
-      <button className="exit-btn" onClick={onClose}>
-        X
-      </button>
-      <span>Update Student Information</span>
-      <form className="form" onSubmit={handleSubmit}>
-        <div className="group">
-          <input
-            placeholder=""
-            type="text"
-            name="name"
-            value={updatedStudent.name}
-            onChange={handleChange}
-            required
-          />
-          <label htmlFor="name">Name:</label>
-        </div>
-        <div className="group">
-          <input
-            placeholder=""
-            type="text"
-            name="studentNo"
-            value={updatedStudent.studentNo}
-            onChange={handleChange}
-            required
-          />
-          <label htmlFor="studentNo">Student No:</label>
-        </div>
-
-        <div className="group">
-          <input
-            placeholder=""
-            type="text"
-            name="course"
-            value={updatedStudent.course}
-            onChange={handleChange}
-            required
-          />
-          <label htmlFor="course">Course:</label>
-        </div>
-
-        <div className="group">
-          <input
-            placeholder=""
-            type="text"
-            name="section"
-            value={updatedStudent.section}
-            onChange={handleChange}
-            required
-          />
-          <label htmlFor="section">Section:</label>
-        </div>
-        <div className="group">
-          <input
-            placeholder=""
-            type="text"
-            name="email"
-            value={updatedStudent.email}
-            onChange={handleChange}
-            required
-          />
-          <label htmlFor="email">Email:</label>
-        </div>
-        <div className="group">
-          <input
-            placeholder=""
-            type="text"
-            name="password"
-            value={updatedStudent.password}
-            onChange={handleChange}
-            required
-          />
-          <label htmlFor="password">Password:</label>
-        </div>
-        <button className="updatestubtn" type="submit" disabled={isUpdating}>
-          {isUpdating ? 'Updating...' : 'Update'}
-        </button>
-      </form>
-    </div>
+    <Modal show={true} onHide={onClose}>
+      <Modal.Header closeButton>
+        <Modal.Title>Update Student Information</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Form onSubmit={handleSubmit}>
+          <Form.Group controlId="formName">
+            <Form.Label>Name:</Form.Label>
+            <Form.Control
+              type="text"
+              name="name"
+              value={updatedStudent.name}
+              onChange={handleChange}
+              required
+            />
+          </Form.Group>
+          <Form.Group controlId="formStudentNo">
+            <Form.Label>Student No:</Form.Label>
+            <Form.Control
+              type="text"
+              name="studentNo"
+              value={updatedStudent.studentNo}
+              onChange={handleChange}
+              required
+            />
+          </Form.Group>
+          <Form.Group controlId="formCourse">
+            <Form.Label>Course:</Form.Label>
+            <Form.Control
+              type="text"
+              name="course"
+              value={updatedStudent.course}
+              onChange={handleChange}
+              required
+            />
+          </Form.Group>
+          <Form.Group controlId="formSection">
+            <Form.Label>Section:</Form.Label>
+            <Form.Control
+              type="text"
+              name="section"
+              value={updatedStudent.section}
+              onChange={handleChange}
+              required
+            />
+          </Form.Group>
+          <Form.Group controlId="formEmail">
+            <Form.Label>Email:</Form.Label>
+            <Form.Control
+              type="text"
+              name="email"
+              value={updatedStudent.email}
+              onChange={handleChange}
+              required
+            />
+          </Form.Group>
+          <Form.Group controlId="formPassword">
+            <Form.Label>Password:</Form.Label>
+            <Form.Control
+              type="text"
+              name="password"
+              value={updatedStudent.password}
+              onChange={handleChange}
+              required
+            />
+          </Form.Group>
+          <Button variant="primary" type="submit" disabled={isUpdating}>
+            {isUpdating ? 'Updating...' : 'Update'}
+          </Button>
+        </Form>
+      </Modal.Body>
+    </Modal>
   );
 }
 

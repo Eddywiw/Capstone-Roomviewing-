@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '../config/firestore';
 import { collection, getDocs } from 'firebase/firestore';
-import { doc, deleteDoc } from 'firebase/firestore';
+import { doc, deleteDoc, addDoc } from 'firebase/firestore';
 import './scheduleTBL.css';
 import InsertEvent from './InsertEvent';
 import UpdateEvent from './updateEvent';
@@ -32,16 +32,38 @@ function ScheduleTBL() {
 
   const handleDeleteBtnClick = async (eventId) => {
     const confirmDelete = window.confirm('Are you sure you want to delete this Event?');
-
+  
     if (confirmDelete) {
       try {
+        // Retrieve the event details before deleting it
+        const eventToDelete = eventList.find((event) => event.id === eventId);
+  
+        // Delete the document from the 'schedules' collection
         await deleteDoc(doc(db, 'schedules', eventId));
+  
+        // Update the local state to remove the deleted event
         setEventList((prevEvents) => prevEvents.filter((event) => event.id !== eventId));
+  
+        // Insert the deleted event into the 'ScheduleArchives' collection
+        const archivesRef = collection(db, 'ScheduleArchives');
+        await insertEventIntoArchives(archivesRef, eventToDelete);
       } catch (error) {
         console.error('Error deleting document: ', error);
       }
     }
   };
+  
+  // Function to insert the event into the 'ScheduleArchives' collection
+  const insertEventIntoArchives = async (archivesRef, event) => {
+    try {
+      // Add the event to the 'ScheduleArchives' collection
+      const newEventRef = await addDoc(archivesRef, event);
+      console.log('Event added to ScheduleArchives with ID: ', newEventRef.id);
+    } catch (error) {
+      console.error('Error adding document to ScheduleArchives: ', error);
+    }
+  };
+  
 
   const handleUpdateBtnClick = (event) => {
     setCurrentEvent(event);
@@ -95,10 +117,10 @@ function ScheduleTBL() {
                 <td>{event.Professor}</td>
                 <td>
                 <div className='d-flex justify-content-center'>
-                  <Button pill variant='primary' className='mr-3' onClick={() => handleUpdateBtnClick(event)}>
+                  <Button variant='outline-primary' className='mr-3' onClick={() => handleUpdateBtnClick(event)}>
                     Edit
                   </Button>
-                  <Button variant='danger' onClick={() => handleDeleteBtnClick(event.id)}>
+                  <Button variant='outline-danger' onClick={() => handleDeleteBtnClick(event.id)}>
                     Remove
                   </Button>
                 </div>

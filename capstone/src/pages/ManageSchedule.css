@@ -1,9 +1,7 @@
 .mngschedule-container {
   background-color: #d2e1e6;
   height: 100vh; /* Set the height to fill the viewport */
-  display: flex;
-  align-items: center;
-  flex-direction: column;
+ 
 }
 
 .mng-con {
@@ -11,4 +9,9 @@
   display: flex;
   gap: 2rem;
   height: 500px;
+  justify-content: center;
+}
+
+.addeventcon {
+
 }

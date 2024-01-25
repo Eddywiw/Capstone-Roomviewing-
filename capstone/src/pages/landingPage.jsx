@@ -1,10 +1,10 @@
 import circleImage from '../assets/ict.jpg';
-import logo from '../assets/logonew.png';
+import logo from '../assets/logologo.png';
 import Modelsti from '../assets/stimodel.png';
 import './landingPage.css';
 import { Link, useNavigate } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+import { getAuth } from 'firebase/auth';
       
 function LandingPage() {
   const [text, setText] = useState('');
@@ -14,7 +14,25 @@ function LandingPage() {
 
   const fullText = "Room Viewing makes it easy and fun to";
   const fullTexts = "find your favorite room.";
+  useEffect(() => {
+    const preventBack = () => {
+      window.history.pushState(null, null, window.location.pathname);
+    };
 
+    preventBack(); // Call initially to set the initial state
+
+    const handleUnload = () => {
+      // You can add cleanup logic here if needed
+    };
+
+    window.addEventListener('popstate', preventBack);
+    window.addEventListener('beforeunload', handleUnload);
+
+    return () => {
+      window.removeEventListener('popstate', preventBack);
+      window.removeEventListener('beforeunload', handleUnload);
+    };
+  }, []);
   useEffect(() => {
     let currentIndex = 0;
 
@@ -113,6 +131,7 @@ function LandingPage() {
 
   return (
     <div className='parent' style={gradientStyle}>
+    <img src={logo} className='logo-img' alt='logo' />
       <div>
         <img src={Modelsti} className='model-img' alt='model' />
       </div>
@@ -130,7 +149,9 @@ function LandingPage() {
             <input className="input" name="password" placeholder="Password" type="password" />
             {passwordError && <p className="error-message">{passwordError}</p>}
             {loginError && <p className="error-message">{loginError}</p>}
+            <div className='buttoncon'>
             <button className='button-confirm' type='submit'>Log in</button>
+            </div>
           </form>
         </div>
       </div>
