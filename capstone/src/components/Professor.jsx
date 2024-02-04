@@ -15,6 +15,11 @@ function Professor() {
   const [profs, setProfs] = useState([]);
   const [selectedFileName, setSelectedFileName] = useState('');
   const [existingStudents, setExistingStudents] = useState([]); 
+  const [showPassword, setShowPassword] = useState(false); // State to control password visibility
+  const [selectedUsers, setSelectedUsers] = useState([]);
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  }
   useEffect(() => {
     // Fetch existing students on component mount
     getExistingStudents();
@@ -69,11 +74,19 @@ function Professor() {
 
   const handleDeleteBtnClick = async (userId) => {
     const confirmDelete = window.confirm("Are you sure you want to delete this User?");
-    
+  
     if (confirmDelete) {
       try {
-        await deleteDoc(doc(db, "professor", userId));
-        // After successfully deleting the document, update the state to remove the deleted user from the table
+        // Get the user data before deletion
+        const userToDelete = users.find((user) => user.id === userId);
+  
+        // Add the user data to the "AccountArchives" collection
+        await addDoc(collection(db, 'AccountArchives'), userToDelete);
+  
+        // Delete the user from the original collection
+        await deleteDoc(doc(db, 'professor', userId));
+  
+        // Update the state to remove the deleted user from the table
         setUsers((prevUsers) => prevUsers.filter((user) => user.id !== userId));
       } catch (error) {
         console.error("Error deleting document: ", error);
@@ -99,15 +112,21 @@ function Professor() {
         const data = new Uint8Array(e.target.result);
         const workbook = XLSX.read(data, { type: 'array' });
         const sheetName = workbook.SheetNames[0]; // Assuming data is in the first sheet
+        const fileName = file.name.toLowerCase(); // Convert file name to lowercase for case-insensitive comparison
   
-        const sheet = workbook.Sheets[sheetName];
-        const jsonData = XLSX.utils.sheet_to_json(sheet);
+        if (fileName === 'professor_list.xlsx' || fileName === 'professor_list.xls') {
+          const sheet = workbook.Sheets[sheetName];
+          const jsonData = XLSX.utils.sheet_to_json(sheet);
   
-        // Now you have jsonData with the Excel data, you can add it to Firestore and update your state.
-        await addDataToFirestore(jsonData);
+          // Now you have jsonData with the Excel data, you can add it to Firestore and update your state.
+          await addDataToFirestore(jsonData);
   
-        // Set the selected file name
-        setSelectedFileName(file.name);
+          // Set the selected file name
+          setSelectedFileName(file.name);
+        } else {
+          // Display an alert if the file name doesn't match the expected format
+          alert('Please upload a file for professor list.');
+        }
       };
   
       reader.readAsArrayBuffer(file);
@@ -147,6 +166,60 @@ function Professor() {
       alert('All users in the Excel file already exist in the table.');
     }
   };
+
+  const handleSelectAll = () => {
+    if (selectedUsers.length === users.length) {
+      // If all users are already selected, clear the selection
+      setSelectedUsers([]);
+    } else {
+      // Otherwise, select all users
+      setSelectedUsers(users.map((user) => user.id));
+    }
+  };
+  
+  const handleSelectUser = (userId) => {
+    if (selectedUsers.includes(userId)) {
+      // If the user is already selected, remove them from the selection
+      setSelectedUsers(selectedUsers.filter((id) => id !== userId));
+    } else {
+      // Otherwise, add the user to the selection
+      setSelectedUsers([...selectedUsers, userId]);
+    }
+  };
+  const handleDeleteSelected = async () => {
+    if (selectedUsers.length === 0) {
+      // If no users are selected, display an alert
+      alert("Please select users to delete.");
+      return;
+    }
+  
+    const confirmDelete = window.confirm("Are you sure you want to delete the selected users?");
+  
+    if (confirmDelete) {
+      try {
+        // Loop through selected users and delete each one
+        for (const userId of selectedUsers) {
+          // Get the user data before deletion
+          const userToDelete = users.find((user) => user.id === userId);
+  
+          // Add the user data to the "AccountArchives" collection
+          await addDoc(collection(db, 'AccountArchives'), userToDelete);
+  
+          // Delete the user from the original collection
+          await deleteDoc(doc(db, 'professor', userId));
+        }
+  
+        // Update the state to remove the deleted users from the table
+        setUsers((prevUsers) => prevUsers.filter((user) => !selectedUsers.includes(user.id)));
+  
+        // Clear the selected users after deletion
+        setSelectedUsers([]);
+      } catch (error) {
+        console.error("Error deleting document: ", error);
+      }
+    }
+  };
+  
   return (
     <div className='use-div'>
       <div className='table-container'>
@@ -169,6 +242,16 @@ function Professor() {
         <Table striped bordered hover>
           <thead>
             <tr>
+              <th className='thconuser'>
+                <div className='deleteallcon'>
+                <Button onClick={handleDeleteSelected}>Delete Selected</Button>
+                </div>
+                <input
+                  type="checkbox"
+                  checked={selectedUsers.length === users.length}
+                  onChange={handleSelectAll}
+                />
+              </th>
               <th>Name</th>
               <th>Professor ID</th>
               <th>Position</th>
@@ -181,11 +264,18 @@ function Professor() {
             {
             profs.map((user, index) => (
               <tr key={index}>
+                <td>
+                  <input
+                    type="checkbox"
+                    checked={selectedUsers.includes(user.id)}
+                    onChange={() => handleSelectUser(user.id)}
+                  />
+                </td>
                 <td>{user.Name}</td>
                 <td>{user.ProfessorID}</td>
                 <td>{user.Position}</td>
                 <td>{user.Email}</td>
-                <td>{user.Password}</td>
+                <td className='tdconuser' onClick={togglePasswordVisibility}> {showPassword ? user.Password : user.Password.replace(/./g, '*')}</td>
                 <td>
                   <div className='d-flex justify-content-center'>
                     <Dropdown>

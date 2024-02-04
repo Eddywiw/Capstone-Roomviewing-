@@ -126,6 +126,56 @@ function Users() {
     const handleEnrollmentChange = (event) => {
       setEnrollment(event.target.value);
     };
+    const addDataToFirestore = async (jsonData, fileName) => {
+      let usersAdded = false; // Flag to check if any user has been added
+    
+      for (const row of jsonData) {
+        try {
+          // Check if the account already exists
+          const existingStudent = existingStudents.find((student) => student.Studentno === row.Studentno);
+    
+          if (existingStudent) {
+            // If a student with the same student number exists, show an alert
+            alert(`A student with the student number already exists.`);
+          } else {
+            // Determine the Firestore collection based on the file name
+            const collectionName = fileName.includes('BSBA') ? 'bsba' : 
+                                  fileName.includes('BSIT') ? 'bsit' :
+                                  fileName.includes('HRS') ? 'hrs' :
+                                  // Add additional cases for other course names if needed
+                                  null;
+    
+            if (collectionName) {
+              const docRef = await addDoc(collection(db, collectionName), {
+                EnrollmentStatus: row.EnrollmentStatus,
+                Name: row.Name,
+                Studentno: row.Studentno,
+                Course: row.Program,
+                Section: row.Section,
+                Email: row.Email,
+                Password: row.Password,
+              });
+    
+              // Update the state with the new account
+              setUsers((prevUsers) => [...prevUsers, { id: docRef.id, ...row }]);
+    
+              usersAdded = true; // Set the flag to true since at least one user has been added
+            } else {
+              console.error('Invalid file name:', fileName);
+            }
+          }
+        } catch (error) {
+          console.error('Error adding document: ', error);
+        }
+      }
+    
+      // Show alert if no user has been added
+      if (!usersAdded) {
+        alert('All users in the Excel file already exist in the table.');
+      }
+    };
+    
+    
     const handleExcelUpload = async (event) => {
       const file = event.target.files[0];
     
@@ -148,22 +198,13 @@ function Users() {
               const sheet = workbook.Sheets[sheetName];
               const jsonData = XLSX.utils.sheet_to_json(sheet);
     
-              // Check if the course in the Excel file matches the selected course
-              const firstRow = jsonData[0] || {};
-              const excelCourse = (firstRow.Program || '').toLowerCase();
+              // Now you have jsonData with the Excel data, you can add it to Firestore and update your state.
+              await addDataToFirestore(jsonData, file.name);
     
-              if (excelCourse === selectedCourse.toLowerCase()) {
-                // Now you have jsonData with the Excel data, you can add it to Firestore and update your state.
-                await addDataToFirestore(jsonData);
-    
-                // Set the selected file name
-                setSelectedFileName(file.name);
-                   // Show success alert
-                  alert('File uploaded successfully!');
-              } else {
-                // Show an error message if the course doesn't match
-                alert(`The uploaded file is for "${excelCourse}" course, but you have selected "${selectedCourse}" course.`);
-              }
+              // Set the selected file name
+              setSelectedFileName(file.name);
+              // Show success alert
+              alert('File uploaded successfully!');
             };
     
             reader.readAsArrayBuffer(file);
@@ -178,53 +219,6 @@ function Users() {
       } else {
         // No file selected
         alert('Please select an Excel file.');
-      }
-    };
-    
-    
-    
-    const addDataToFirestore = async (jsonData) => {
-      let usersAdded = false; // Flag to check if any user has been added
-    
-      for (const row of jsonData) {
-        try {
-          // Check if the account already exists
-          const existingStudent = existingStudents.find((student) => student.Studentno === row.Studentno);
-    
-          const auth = getAuth();
-          const userCredential = await createUserWithEmailAndPassword(
-            auth,
-            row.Email,
-            row.Password
-          );
-
-          const user = userCredential.user;
-          console.log('User created:', user);
-          if (!existingStudent) {
-            // Add the new account to Firestore
-            const docRef = await addDoc(collection(db, selectedCourse), {
-              EnrollmentStatus: row.EnrollmentStatus,
-              Name: row.Name,
-              Studentno: row.Studentno,
-              Course: row.Program,
-              Section: row.Section,
-              Email: row.Email,
-              Password: row.Password,
-            });
-    
-            // Update the state with the new account
-            setUsers((prevUsers) => [...prevUsers, { id: docRef.id, ...row }]);
-            
-            usersAdded = true; // Set the flag to true since at least one user has been added
-          }
-        } catch (error) {
-          console.error('Error adding document: ', error);
-        }
-      }
-    
-      // Show alert if no user has been added
-      if (!usersAdded) {
-        alert('All users in the Excel file already exist in the table.');
       }
     };
     
@@ -250,7 +244,11 @@ function Users() {
   useEffect(() =>{
     getStudent()
   }, [users]);
-  
+  const [showPassword, setShowPassword] = useState(false); // State to control password visibility
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  }
 
   const [showModal, setShowModal] = useState(false); // State to control the modal
  
@@ -465,7 +463,7 @@ function Users() {
                 <td>{user.Course}</td>
                 <td>{user.Section}</td>
                 <td>{user.Email}</td>
-                <td className='tdconuser'>{user.Password}
+                <td className='tdconuser' onClick={togglePasswordVisibility}> {showPassword ? user.Password : user.Password.replace(/./g, '*')}
             
                   <div className='d-flex justify-content-center'>
                     {/* Conditionally render the Add Irregular Subject button for Irregular users */}

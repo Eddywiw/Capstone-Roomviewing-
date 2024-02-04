@@ -177,6 +177,32 @@ function InsertEvent() {
       // Check for schedule conflicts
     // Check for schedule conflicts
     const scheduleCollection = collection(db, 'schedules');
+   
+    // Query for schedules with the same professor and title
+    const conflictsQuery = query(
+      scheduleCollection,
+      where('Professor', '==', newEvent.professor),
+      where('Title', '==', newEvent.title)
+    );
+
+    const conflictsSnapshot = await getDocs(conflictsQuery);
+
+    // Filter conflicts based on overlapping time slot
+    const conflictingSchedules = conflictsSnapshot.docs.filter(doc => {
+      const scheduleStart = doc.data().Start.toDate();
+      const scheduleEnd = doc.data().End.toDate();
+      const proposedStart = new Date(`${date}T${startTime}`);
+      const proposedEnd = new Date(`${date}T${endTime}`);
+
+      // Check for overlap with the proposed time slot
+      return (scheduleStart <= proposedEnd && scheduleEnd >= proposedStart);
+    });
+
+    // Check if there are any conflicts
+    if (conflictingSchedules.length > 0) {
+      window.alert('Conflict Schedule! There is an existing schedule with the same professor, title, and overlapping time slot.');
+      return;
+    }
 
     // Query for schedules for the specified room on the given date
     const dateQuery = query(

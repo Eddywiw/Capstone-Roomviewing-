@@ -144,9 +144,9 @@ function LandingPage() {
             <p className='sub-header'>{texts}</p>
           </div>
           <form className='login-form' onSubmit={handleLoginFormSubmit}>
-            <input className="input" name="email" placeholder="Email" type="text" />
+            <input className="input" name="email" placeholder="Enter Admin username" type="text" />
             {emailError && <p className="error-message">{emailError}</p>}
-            <input className="input" name="password" placeholder="Password" type="password" />
+            <input className="input" name="password" placeholder="Enter Admin password" type="password" />
             {passwordError && <p className="error-message">{passwordError}</p>}
             {loginError && <p className="error-message">{loginError}</p>}
             <div className='buttoncon'>

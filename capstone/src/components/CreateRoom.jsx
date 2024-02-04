@@ -13,6 +13,8 @@ function CreateRoom({ onClose, onRoomAdded }) {
     capacity: "",
     status: "",
     imageurl: null, // Initialize imageurl as null
+    imageurl2: null, 
+    imageurl3: null, 
   });
 
   const [alertMessage, setAlertMessage] = useState("");
@@ -65,17 +67,29 @@ function CreateRoom({ onClose, onRoomAdded }) {
     }
 
     try {
-      const uniqueFilename = uuidv4();
-      const imageRef = ref(storage, `images/${uniqueFilename}`);
-      await uploadBytes(imageRef, newRoom.imageurl);
-      const imageUrl = await getDownloadURL(imageRef);
+      const uploadedImageUrls = [];
+
+      for (const field in newRoom) {
+        if (field.startsWith('imageurl')) {
+          const image = newRoom[field];
+          if (image) {
+            const uniqueFilename = uuidv4();
+            const imageRef = ref(storage, `images/${uniqueFilename}`);
+            await uploadBytes(imageRef, image);
+            const imageUrl = await getDownloadURL(imageRef);
+            uploadedImageUrls.push(imageUrl);
+          }
+        }
+      }
 
       const docRef = await addDoc(collection(db, "rooms"), {
         Roomno: newRoom.roomnum,
         Floor: newRoom.floor,
         Capacity: newRoom.capacity,
         Status: "Available",
-        ImageUrl: imageUrl,
+        ImageUrl: uploadedImageUrls[0], // First image
+        ImageUrl2: uploadedImageUrls[1], // Second image
+        ImageUrl3: uploadedImageUrls[2], // Third image
       });
 
       onRoomAdded({
@@ -83,7 +97,9 @@ function CreateRoom({ onClose, onRoomAdded }) {
         Floor: newRoom.floor,
         Capacity: newRoom.capacity,
         Status: "Available",
-        ImageUrl: imageUrl,
+        ImageUrl: uploadedImageUrls[0],
+        ImageUrl2: uploadedImageUrls[1],
+        ImageUrl3: uploadedImageUrls[2],
       });
 
       setAlertMessage("Room successfully added!");
@@ -98,6 +114,8 @@ function CreateRoom({ onClose, onRoomAdded }) {
         capacity: "",
         status: "",
         imageurl: null,
+        imageurl2: null, 
+        imageurl3: null,
       });
     } catch (error) {
       console.error("Error adding document: ", error);
@@ -149,10 +167,30 @@ function CreateRoom({ onClose, onRoomAdded }) {
           </Form.Group>
        
           <Form.Group controlId="formImageurl">
-            <Form.Label>Image:</Form.Label>
+            <Form.Label>Image 1:</Form.Label>
             <Form.Control
               type="file"
               name="imageurl"
+              accept=".jpg, .jpeg, .png"
+              onChange={handleChange}
+              required
+            />
+          </Form.Group>
+          <Form.Group controlId="formImageurl">
+            <Form.Label>Image 2:</Form.Label>   
+            <Form.Control
+              type="file"
+              name="imageurl2"
+              accept=".jpg, .jpeg, .png"
+              onChange={handleChange}
+              required
+            />
+          </Form.Group>
+          <Form.Group controlId="formImageurl">
+            <Form.Label>Image 3:</Form.Label>
+            <Form.Control
+              type="file"
+              name="imageurl3"
               accept=".jpg, .jpeg, .png"
               onChange={handleChange}
               required

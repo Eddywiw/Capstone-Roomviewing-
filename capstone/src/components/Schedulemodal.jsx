@@ -1,10 +1,9 @@
-// Schedulemodal.jsx
-
 import React, { useState, useEffect } from 'react';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../config/firestore';
 
 import './Schedulemodal.css'; // Import your CSS file for styling
+import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap CSS
 
 function Schedulemodal({ onClose, onSelectSchedule, currentUser }) {
   const [schedules, setSchedules] = useState([]);
@@ -40,10 +39,30 @@ function Schedulemodal({ onClose, onSelectSchedule, currentUser }) {
     setSelectedSchedule(schedule);
   };
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     if (selectedSchedule && selectedSchedule.id) {
-      onSelectSchedule(selectedSchedule);
-      onClose();
+      try {
+        const querySnapshot = await getDocs(collection(db, 'irregularSchedule'));
+        const existingSchedules = querySnapshot.docs.map(doc => doc.data());
+  
+        // Check if any schedule with the same Title exists for the selected user
+        const isScheduleExisting = existingSchedules.some(schedule => {
+          return (
+            schedule.userName === currentUser.Name && // Assuming currentUser has a Name property
+            schedule.Title === selectedSchedule.Title
+          );
+        });
+  
+        if (isScheduleExisting) {
+          alert('A schedule with the same title already exists for the selected user.');
+        } else {
+          alert('A schedule is added successfully.');
+          onSelectSchedule(selectedSchedule);
+          onClose();
+        }
+      } catch (error) {
+        console.error('Error checking existing schedules: ', error);
+      }
     } else {
       console.error('Invalid selectedSchedule:', selectedSchedule);
     }
@@ -58,15 +77,15 @@ function Schedulemodal({ onClose, onSelectSchedule, currentUser }) {
             <li
               key={schedule.id}
               onClick={() => handleSelectSchedule(schedule)}
-              className={selectedSchedule === schedule ? 'selected' : ''}
+              className={`list-group-item ${selectedSchedule === schedule ? 'active' : ''}`}
             >
               {schedule.Title} - {schedule.Professor}
             </li>
           ))}
         </ul>
         <div className="button-container">
-          <button onClick={onClose}>Cancel</button>
-          <button onClick={handleConfirm} disabled={!selectedSchedule}>
+          <button className="btn btn-secondary" onClick={onClose}>Cancel</button>
+          <button className="btn btn-primary" onClick={handleConfirm} disabled={!selectedSchedule}>
             Confirm
           </button>
         </div>

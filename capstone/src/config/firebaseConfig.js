@@ -1,6 +1,5 @@
 // firebaseConfig.js
 
-// Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyC_wZQ5qbL_P5D0O2vgsTFk01ley-bhXn8",
   authDomain: "capstonedb8.firebaseapp.com",

@@ -31,15 +31,18 @@ function UpdateRoom({ onClose, currentRoom, onUpdatedRoom }) {
   const handleSubmit = async (event) => {
     event.preventDefault();
     setIsUpdating(true); // Disable the button during update
-
+  
     try {
+      console.log("Current Room ID:", currentRoom.id); // Add this logging statement
+  
       // Check if there is a new image to upload
       if (updatedRoom.NewImage) {
         const uniqueFilename = currentRoom.id; // Use the existing room ID as the filename
+        console.log("Unique Filename:", uniqueFilename); // Add this logging statement
         const imageRef = ref(storage, `images/${uniqueFilename}`);
         await uploadBytes(imageRef, updatedRoom.NewImage);
         const imageUrl = await getDownloadURL(imageRef);
-
+  
         // Update the room with the new image URL
         await updateDoc(doc(db, 'rooms', currentRoom.id), {
           Roomno: updatedRoom.Roomno,
@@ -48,7 +51,7 @@ function UpdateRoom({ onClose, currentRoom, onUpdatedRoom }) {
           Status: updatedRoom.Status,
           ImageUrl: imageUrl,
         });
-
+  
         // Update the roomEntries state with the updated data
         onUpdatedRoom({
           id: currentRoom.id,
@@ -63,7 +66,7 @@ function UpdateRoom({ onClose, currentRoom, onUpdatedRoom }) {
           Capacity: updatedRoom.Capacity,
           Status: updatedRoom.Status,
         });
-
+  
         // Update the roomEntries state with the updated data
         onUpdatedRoom({
           id: currentRoom.id,
@@ -71,19 +74,17 @@ function UpdateRoom({ onClose, currentRoom, onUpdatedRoom }) {
         });
       }
       alert(`Room ${updatedRoom.Roomno} updated successfully!`);
-
-
+  
       // Close the UpdateUser modal after successful update
       onClose();
     } catch (error) {
       console.error('Error updating document: ', error);
       setAlertMessage("Error updating room. Please try again.");
-
     }
-
+  
     setIsUpdating(false); // Re-enable the button after update
   };
-
+  
   return (
     <Modal show={true} onHide={onClose}>
       <Modal.Header closeButton>
